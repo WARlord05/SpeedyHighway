@@ -1,38 +1,26 @@
 {
-  "high_scores": [
-    {
-      "score": 1587,
-      "difficulty": "Hard",
-      "survival_time": 16,
-      "date": "2025-07-14 23:38"
-    },
-    {
-      "score": 1000,
-      "difficulty": "Hard",
-      "survival_time": 60,
-      "date": "2025-07-14 22:19"
-    }
-  ],
-  "difficulty": 2,
+  "high_scores": [],
+  "difficulty": 1,
   "selected_car": 0,
   "unlocked_cars": [
-    0,
-    1,
-    2
+    0
   ],
-  "achievements": {
-    "first_game": true,
-    "score_1000": true
-  },
-  "games_played": 2,
-  "total_playtime": 4578,
+  "achievements": {},
+  "games_played": 0,
+  "total_playtime": 0,
   "best_streak": 0,
-  "last_daily_challenge": "2025-07-14",
-  "highest_difficulty_reached": 2,
+  "last_daily_challenge": "2025-07-15",
+  "daily_challenge": {
+    "type": "lane_change",
+    "target": 30,
+    "description": "Change lanes 30 times",
+    "completed": false
+  },
+  "highest_difficulty_reached": 0,
   "best_scores_per_difficulty": [
     0,
     0,
-    1587,
+    0,
     0
   ]
 }

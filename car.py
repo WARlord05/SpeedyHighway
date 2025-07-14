@@ -9,7 +9,7 @@ from time import sleep
 from datetime import datetime, timedelta
 
 __version__ = "1.0.1"
-__author__ = "WARlord05 (Enhanced from Tanay Vidhate's original)"
+__author__ = "Tanay Vidhate (WARlord05)"
 __description__ = "Speedy Highway Racing Game - Enhanced Edition"
 
 warnings.filterwarnings("ignore", message="pkg_resources is deprecated")
@@ -155,6 +155,7 @@ class CarRacing:
             "total_playtime": 0,
             "best_streak": 0,
             "last_daily_challenge": None,
+            "daily_challenge": {},
             "highest_difficulty_reached": 0,
             "best_scores_per_difficulty": [0, 0, 0, 0]
         }
@@ -208,17 +209,23 @@ class CarRacing:
             Achievement("perfect_game", "Perfect Game", "Complete daily challenge", lambda: self.daily_challenge.get("completed", False))
         ]
         
+        self.ensure_game_data_exists()
         for achievement in self.achievements:
             achievement.unlocked = self.game_data.get("achievements", {}).get(achievement.id, False)
     
     def check_achievements(self):
         """Check and unlock achievements"""
         self.ensure_game_data_exists()
+        achievements_changed = False
         for achievement in self.achievements:
             if not achievement.unlocked and achievement.condition():
                 achievement.unlocked = True
                 self.game_data["achievements"][achievement.id] = True
                 self.show_achievement_notification(achievement)
+                achievements_changed = True
+        
+        if achievements_changed:
+            self.save_game_data()
     
     def show_achievement_notification(self, achievement):
         """Show achievement unlock notification"""
@@ -237,6 +244,8 @@ class CarRacing:
             challenge = random.choice(challenges)
             challenge["completed"] = False
             self.game_data["last_daily_challenge"] = today
+            self.game_data["daily_challenge"] = challenge
+            self.save_game_data()
             return challenge
         return self.game_data.get("daily_challenge", {})
     
@@ -327,6 +336,8 @@ class CarRacing:
             self.handle_game_events(event)
         elif self.current_state == GameStates.CAR_SELECTION:
             self.handle_car_selection_events(event)
+        elif self.current_state == GameStates.ACHIEVEMENTS:
+            self.handle_achievements_events(event)
     
     def handle_menu_events(self, event):
         """Handle menu events"""
@@ -643,6 +654,8 @@ class CarRacing:
         self.game_data["games_played"] = self.games_played
         self.game_data["total_playtime"] += self.survival_time
         
+        self.check_achievements()
+        
         if self.current_difficulty > self.game_data.get("highest_difficulty_reached", 0):
             self.game_data["highest_difficulty_reached"] = self.current_difficulty
         
@@ -667,12 +680,16 @@ class CarRacing:
             
             if challenge_type == "score" and self.total_score >= target:
                 self.daily_challenge["completed"] = True
+                self.game_data["daily_challenge"] = self.daily_challenge
             elif challenge_type == "survival" and self.survival_time >= target:
                 self.daily_challenge["completed"] = True
+                self.game_data["daily_challenge"] = self.daily_challenge
             elif challenge_type == "near_miss" and self.near_miss_count >= target:
                 self.daily_challenge["completed"] = True
+                self.game_data["daily_challenge"] = self.daily_challenge
             elif challenge_type == "lane_change" and self.lane_change_count >= target:
                 self.daily_challenge["completed"] = True
+                self.game_data["daily_challenge"] = self.daily_challenge
         
         self.save_game_data()
         self.current_state = GameStates.GAME_OVER
@@ -750,6 +767,7 @@ class CarRacing:
         
         font_title = pygame.font.SysFont("comicsansms", 48, True)
         font_text = pygame.font.SysFont("lucidaconsole", 16)
+        font_small = pygame.font.SysFont("lucidaconsole", 14)
         
         title = font_title.render("ACHIEVEMENTS", True, self.green)
         self.gameDisplay.blit(title, (400 - title.get_width() // 2, 50))
@@ -761,12 +779,15 @@ class CarRacing:
             rendered_text = font_text.render(text, True, color)
             self.gameDisplay.blit(rendered_text, (50, 120 + i * 30))
         
-        instruction = font_text.render("Press ESC to return to menu", True, self.yellow)
-        self.gameDisplay.blit(instruction, (400 - instruction.get_width() // 2, 500))
+        instructions = [
+            "ESC - Back to Menu",
+            "R - Reset Progress (WARNING: This will delete all your data!)"
+        ]
         
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_ESCAPE]:
-            self.current_state = GameStates.MENU
+        for i, instruction in enumerate(instructions):
+            color = self.yellow if i == 0 else self.red
+            text = font_small.render(instruction, True, color)
+            self.gameDisplay.blit(text, (50, 450 + i * 20))
     
     def display_car_selection(self):
         """Display car selection screen"""
@@ -867,7 +888,7 @@ class CarRacing:
         self.gameDisplay.blit(text, (600, 520))
         text = font.render("Tanay Vidhate", True, self.white)
         self.gameDisplay.blit(text, (600, 540))
-        text = font.render("Enhanced by WARlord05", True, self.white)
+        text = font.render("(WARlord05)", True, self.white)
         self.gameDisplay.blit(text, (600, 560))
 
     def check_speed_demon_achievement(self):
@@ -887,6 +908,37 @@ class CarRacing:
         if self.current_difficulty == 3:
             return self.enemy_car_speed >= 40
         return False
+    
+    def handle_achievements_events(self, event):
+        """Handle achievements screen events"""
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.current_state = GameStates.MENU
+            elif event.key == pygame.K_r:
+                self.reset_progress()
+    
+    def reset_progress(self):
+        """Reset all game progress including achievements, scores, and settings"""
+        self.create_default_game_data()
+        self.save_game_data()
+
+        self.load_game_data()
+        
+
+        self.current_difficulty = self.game_data.get("difficulty", 1)
+        self.current_car = self.game_data.get("selected_car", 0)
+        self.games_played = self.game_data.get("games_played", 0)
+        self.total_playtime = self.game_data.get("total_playtime", 0)
+        self.best_streak = self.game_data.get("best_streak", 0)
+        self.current_streak = 0
+        
+        self.init_achievements()
+
+        self.reload_car_image()
+        
+        self.daily_challenge = self.generate_daily_challenge()
+        
+        print("Progress reset successfully!")
     
 if __name__ == '__main__':
     car_racing = CarRacing()
