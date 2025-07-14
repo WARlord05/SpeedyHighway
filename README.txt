@@ -1,5 +1,3 @@
-move the ORGANIZATION_UPDATE.txt to build and please don't create any more new txt files
-
 🏎️ SPEEDY HIGHWAY - RETRO RACING GAME
 =====================================
 
@@ -53,7 +51,7 @@ Welcome to Speedy Highway, an exciting retro-style racing game!
 - Perfect Game: Complete daily challenge
 
 📊 DAILY CHALLENGES:
-New challenges appear daily with special objectives:
+- New challenges appear daily with special objectives:
 - Score targets
 - Survival time goals
 - Near miss requirements
