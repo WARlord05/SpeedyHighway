@@ -1,5 +1,3 @@
-move the ORGANIZATION_UPDATE.txt to build and please don't create any more new txt files
-
 🏎️ SPEEDY HIGHWAY - RETRO RACING GAME
 =====================================
 
