@@ -19,6 +19,7 @@ This directory has been cleaned and organized for optimal distribution and maint
 ├── 📂 project/                     # Development and build tools
 │   ├── build.bat                   # Build script for creating executable
 │   ├── CLEANUP_SUMMARY.txt        # Directory cleanup summary
+│   ├── GITHUB_SETUP.txt           # Git repository setup and workflow guide
 │   ├── ORGANIZATION_UPDATE.txt     # Recent file organization changes
 │   ├── PROJECT_COMPLETION_SUMMARY.txt # Final project status
 │   └── test_robust_data_handling.py # Comprehensive test suite
@@ -43,6 +44,7 @@ This directory has been cleaned and organized for optimal distribution and maint
 📁 project/ folder now contains:      # Development and build tools
 ✅ build.bat                        # Build script (consolidated)
 ✅ CLEANUP_SUMMARY.txt               # Moved to project/
+✅ GITHUB_SETUP.txt                 # Moved to project/
 ✅ ORGANIZATION_UPDATE.txt           # Moved to project/
 ✅ PROJECT_COMPLETION_SUMMARY.txt    # Moved to project/
 ✅ test_robust_data_handling.py      # Moved to project/

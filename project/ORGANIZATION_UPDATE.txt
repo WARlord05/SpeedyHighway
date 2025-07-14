@@ -15,6 +15,7 @@ test_robust_data_handling.py → project/test_robust_data_handling.py
 PROJECT_COMPLETION_SUMMARY.txt → project/PROJECT_COMPLETION_SUMMARY.txt  
 CLEANUP_SUMMARY.txt → project/CLEANUP_SUMMARY.txt
 ORGANIZATION_UPDATE.txt → project/ORGANIZATION_UPDATE.txt (this file)
+GITHUB_SETUP.txt → project/GITHUB_SETUP.txt (Git workflow guide)
 
 FOLDER RENAMED:
 --------------
@@ -37,13 +38,14 @@ HOW TO USE:
    - docs/DOCUMENTATION.txt (technical details)
    - project/PROJECT_COMPLETION_SUMMARY.txt (project status)
    - project/ORGANIZATION_UPDATE.txt (this file)
+   - project/GITHUB_SETUP.txt (Git workflow guide)
 
 CURRENT ROOT LEVEL (Clean & Essential):
 ======================================
 ✅ car.py - Main source code
 ✅ README.txt - User instructions
 ✅ assets/ - Game graphics
-✅ project/ - Development tools (build script, tests, summaries, organization notes)
+✅ project/ - Development tools (build script, tests, summaries, organization notes, Git guide)
 ✅ data/ - Save data
 ✅ dist/ - Executable
 ✅ docs/ - Technical docs
