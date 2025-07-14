@@ -3,10 +3,18 @@ import random
 import json
 import sys
 import warnings
+import hashlib
+import time
 from time import sleep
 from datetime import datetime, timedelta
 
+__version__ = "1.0.1"
+__author__ = "WARlord05 (Enhanced from Tanay Vidhate's original)"
+__description__ = "Speedy Highway Racing Game - Enhanced Edition"
+
 warnings.filterwarnings("ignore", message="pkg_resources is deprecated")
+
+_entropy_seed = hashlib.sha256(str(time.time()).encode()).hexdigest()[:16]
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
@@ -278,7 +286,7 @@ class CarRacing:
 
     def racing_window(self):
         self.gameDisplay = pygame.display.set_mode((self.display_width, self.display_height))
-        pygame.display.set_caption('Speedy Highway - Retro Racing')
+        pygame.display.set_caption(f'Speedy Highway - Retro Racing v{__version__}')
         self.main_game_loop()
     
     def main_game_loop(self):
@@ -393,7 +401,11 @@ class CarRacing:
         
         font_title = pygame.font.SysFont("comicsansms", 48, True)
         title = font_title.render("SPEEDY HIGHWAY", True, self.white)
-        self.gameDisplay.blit(title, (400 - title.get_width() // 2, 100))
+        self.gameDisplay.blit(title, (400 - title.get_width() // 2, 80))
+        
+        font_version = pygame.font.SysFont("lucidaconsole", 16)
+        version_text = font_version.render(f"v{__version__} - Enhanced Edition", True, self.yellow)
+        self.gameDisplay.blit(version_text, (400 - version_text.get_width() // 2, 145))
         
         font_menu = pygame.font.SysFont("lucidaconsole", 24)
         options = [
@@ -407,7 +419,7 @@ class CarRacing:
         
         for i, option in enumerate(options):
             text = font_menu.render(option, True, self.white)
-            self.gameDisplay.blit(text, (400 - text.get_width() // 2, 250 + i * 40))
+            self.gameDisplay.blit(text, (400 - text.get_width() // 2, 200 + i * 40))
         
         if self.daily_challenge:
             font_small = pygame.font.SysFont("lucidaconsole", 16)
@@ -415,7 +427,7 @@ class CarRacing:
             if self.daily_challenge.get('completed', False):
                 challenge_text += " ✓"
             text = font_small.render(challenge_text, True, self.yellow)
-            self.gameDisplay.blit(text, (10, 550))
+            self.gameDisplay.blit(text, (10, 570))
     
     def update_game(self):
         """Update main game (equivalent to old run_car)"""
@@ -849,10 +861,14 @@ class CarRacing:
 
     def display_credit(self):
         font = pygame.font.SysFont("lucidaconsole", 14)
+        text = font.render(f"SpeedyHighway v{__version__}", True, self.white)
+        self.gameDisplay.blit(text, (600, 500))
         text = font.render("Thanks & Regards,", True, self.white)
         self.gameDisplay.blit(text, (600, 520))
         text = font.render("Tanay Vidhate", True, self.white)
         self.gameDisplay.blit(text, (600, 540))
+        text = font.render("Enhanced by WARlord05", True, self.white)
+        self.gameDisplay.blit(text, (600, 560))
 
     def check_speed_demon_achievement(self):
         """Check if Speed Demon achievement should be unlocked based on difficulty"""

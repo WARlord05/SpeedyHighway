@@ -1,0 +1,37 @@
+# UTF-8
+#
+# Version information for SpeedyHighway.exe
+# Enhanced metadata for antivirus compatibility
+#
+VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers=(1, 0, 1, 0),
+    prodvers=(1, 0, 1, 0),
+    mask=0x3f,
+    flags=0x0,
+    OS=0x4,
+    fileType=0x1,
+    subtype=0x0,
+    date=(0, 0)
+  ),
+  kids=[
+    StringFileInfo(
+      [
+      StringTable(
+        '040904B0',
+        [StringStruct('CompanyName', 'WARlord05 Games'),
+        StringStruct('FileDescription', 'Speedy Highway Racing Game - Enhanced Edition'),
+        StringStruct('FileVersion', '1.0.1.0'),
+        StringStruct('InternalName', 'SpeedyHighway'),
+        StringStruct('LegalCopyright', 'Copyright (c) 2025 WARlord05'),
+        StringStruct('LegalTrademarks', 'WARlord05 Games'),
+        StringStruct('OriginalFilename', 'SpeedyHighway.exe'),
+        StringStruct('ProductName', 'Speedy Highway'),
+        StringStruct('ProductVersion', '1.0.1'),
+        StringStruct('Comments', 'A fun racing game built with Python and Pygame'),
+        StringStruct('PrivateBuild', 'Open Source Game Project'),
+        StringStruct('SpecialBuild', 'Enhanced Edition with improved features')])
+      ]),
+    VarFileInfo([VarStruct('Translation', [1033, 1200])])
+  ]
+)
