@@ -2,8 +2,11 @@ import os
 import random
 import json
 import sys
+import warnings
 from time import sleep
 from datetime import datetime, timedelta
+
+warnings.filterwarnings("ignore", message="pkg_resources is deprecated")
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
