@@ -1,0 +1,28 @@
+{
+  "high_scores": [
+    {
+      "score": 1000,
+      "difficulty": "Hard",
+      "survival_time": 60,
+      "date": "2025-07-14 22:19"
+    }
+  ],
+  "difficulty": 2,
+  "selected_car": 0,
+  "unlocked_cars": [
+    0,
+    1
+  ],
+  "achievements": {},
+  "games_played": 1,
+  "total_playtime": 3600,
+  "best_streak": 0,
+  "last_daily_challenge": "2025-07-14",
+  "highest_difficulty_reached": 2,
+  "best_scores_per_difficulty": [
+    0,
+    0,
+    1000,
+    0
+  ]
+}
