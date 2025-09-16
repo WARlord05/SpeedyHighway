@@ -53,3 +53,7 @@ Thumbs.db
 *.tmp
 *.temp
 *.log
+car.py.bak
+assets/music/menu_music.mp3.bak
+assets/sounds/achievement.wav.bak
+Future plans(SpeedyH).txt

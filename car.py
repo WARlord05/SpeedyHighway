@@ -5,16 +5,13 @@ import sys
 import warnings
 import hashlib
 import time
-from time import sleep
 from datetime import datetime, timedelta
 
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 __author__ = "Tanay Vidhate (WARlord05)"
 __description__ = "Speedy Highway Racing Game - Enhanced Edition"
 
 warnings.filterwarnings("ignore", message="pkg_resources is deprecated")
-
-_entropy_seed = hashlib.sha256(str(time.time()).encode()).hexdigest()[:16]
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 
@@ -22,8 +19,206 @@ import pygame
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = 'centered'
 
+class SoundManager:
+    def __init__(self):
+        pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=512)
+        self.sounds = {}
+        self.current_engine_sound = None
+        self.engine_channel = None
+        self.startup_channel = None
+        self.engine_startup_playing = False
+        self.master_volume = 0.7
+        self.sfx_volume = 0.8
+        self.engine_volume = 0.6
+        self.crash_channel = None
+        self.music_volume = 0.5
+        self.music_playing = False
+        self.load_sounds()
+    
+    def load_sounds(self):
+        sound_files = {
+            'crash': 'crash.wav',
+            'off_road': 'off_road.wav',
+            'engine_default': 'engine_default.wav',
+            'engine_default_loop': 'engine_default1.wav',
+            'engine_blue': 'engine_blue.wav',
+            'engine_blue_loop': 'engine_blue1.wav',
+            'engine_red': 'engine_red.wav',
+            'engine_red_loop': 'engine_red1.wav',
+            'engine_special': 'engine_special.wav',
+            'engine_special_loop': 'engine_special1.wav',
+            'near_miss': 'near_miss.wav',
+            'achievement': 'achievement.wav',
+            'menu_select': 'menu_select.wav',
+            'car_unlock': 'car_unlock.wav'
+        }
+        
+        music_files = {
+            'menu_music': 'menu_music.mp3',
+            'game_music': 'game_music.mp3'
+        }
+        
+        for sound_name, filename in sound_files.items():
+            try:
+                sound_path = get_resource_path(os.path.join("assets", "sounds", filename))
+                if os.path.exists(sound_path):
+                    self.sounds[sound_name] = pygame.mixer.Sound(sound_path)
+                else:
+                    self.sounds[sound_name] = None
+                    print(f"Warning: Sound file {filename} not found. Feature will be silent.")
+            except pygame.error as e:
+                print(f"Warning: Could not load sound {filename}: {e}")
+                self.sounds[sound_name] = None
+        
+        for music_name, filename in music_files.items():
+            try:
+                music_path = get_resource_path(os.path.join("assets", "music", filename))
+                if os.path.exists(music_path):
+                    self.sounds[music_name] = music_path
+                else:
+                    self.sounds[music_name] = None
+                    print(f"Warning: Music file {filename} not found. Background music will be silent.")
+            except Exception as e:
+                print(f"Warning: Could not load music {filename}: {e}")
+                self.sounds[music_name] = None
+    
+    def play_sound(self, sound_name, volume_override=None):
+        if sound_name in self.sounds and self.sounds[sound_name]:
+            try:
+                sound = self.sounds[sound_name]
+                volume = volume_override if volume_override else self.sfx_volume * self.master_volume
+                sound.set_volume(volume)
+                
+                if sound_name == 'crash':
+                    if self.crash_channel:
+                        self.crash_channel.stop()
+                    self.crash_channel = sound.play()
+                    if self.crash_channel:
+                        self.crash_channel.set_volume(min(1.0, volume * 1.2))
+                else:
+                    sound.play()
+            except pygame.error as e:
+                print(f"Error playing sound {sound_name}: {e}")
+    
+    def play_engine_sound(self, car_type, loop=True):
+        startup_sounds = {
+            0: 'engine_default',
+            1: 'engine_blue', 
+            2: 'engine_red',
+            3: 'engine_special'
+        }
+        
+        loop_sounds = {
+            0: 'engine_default_loop',
+            1: 'engine_blue_loop', 
+            2: 'engine_red_loop',
+            3: 'engine_special_loop'
+        }
+        
+        startup_sound_name = startup_sounds.get(car_type, 'engine_default')
+        loop_sound_name = loop_sounds.get(car_type, 'engine_default_loop')
+        
+        self.stop_engine_sound()
+        
+        if loop and startup_sound_name in self.sounds and self.sounds[startup_sound_name]:
+            try:
+                startup_sound = self.sounds[startup_sound_name]
+                self.startup_channel = startup_sound.play()
+                if self.startup_channel:
+                    self.startup_channel.set_volume(self.engine_volume * self.master_volume)
+                    self.engine_startup_playing = True
+                    
+                if loop_sound_name in self.sounds and self.sounds[loop_sound_name]:
+                    self.current_engine_sound = self.sounds[loop_sound_name]
+                    startup_length = int(startup_sound.get_length() * 1000)
+                    pygame.time.set_timer(pygame.USEREVENT + 1, startup_length)
+                    
+            except pygame.error as e:
+                print(f"Error playing engine startup sound: {e}")
+        elif not loop and startup_sound_name in self.sounds and self.sounds[startup_sound_name]:
+            try:
+                startup_sound = self.sounds[startup_sound_name]
+                self.startup_channel = startup_sound.play()
+                if self.startup_channel:
+                    self.startup_channel.set_volume(self.engine_volume * self.master_volume)
+            except pygame.error as e:
+                print(f"Error playing engine preview sound: {e}")
+    
+    def start_engine_loop(self):
+        if self.current_engine_sound and not self.engine_channel:
+            try:
+                self.engine_channel = self.current_engine_sound.play(-1)
+                if self.engine_channel:
+                    self.engine_channel.set_volume(self.engine_volume * self.master_volume)
+                self.engine_startup_playing = False
+            except pygame.error as e:
+                print(f"Error playing engine loop sound: {e}")
+    
+    def stop_engine_sound(self):
+        if self.engine_channel:
+            self.engine_channel.stop()
+            self.engine_channel = None
+        if self.startup_channel:
+            self.startup_channel.stop()
+            self.startup_channel = None
+        self.current_engine_sound = None
+        self.engine_startup_playing = False
+        pygame.time.set_timer(pygame.USEREVENT + 1, 0)
+    
+    def update_engine_volume(self, speed_factor):
+        if self.engine_channel:
+            volume = min(1.0, 0.3 + (speed_factor * 0.7))
+            final_volume = volume * self.engine_volume * self.master_volume
+            self.engine_channel.set_volume(final_volume)
+        if self.startup_channel and self.engine_startup_playing:
+            volume = min(1.0, 0.3 + (speed_factor * 0.7))
+            final_volume = volume * self.engine_volume * self.master_volume
+            self.startup_channel.set_volume(final_volume)
+    
+    def set_master_volume(self, volume):
+        self.master_volume = max(0.0, min(1.0, volume))
+        if self.engine_channel:
+            self.engine_channel.set_volume(self.engine_volume * self.master_volume)
+        if self.startup_channel and self.engine_startup_playing:
+            self.startup_channel.set_volume(self.engine_volume * self.master_volume)
+        self.update_master_volume_with_music()
+    
+    def cleanup(self):
+        self.stop_engine_sound()
+        self.stop_music()
+        if self.crash_channel:
+            self.crash_channel.stop()
+            self.crash_channel = None
+        pygame.mixer.quit()
+    
+    def play_music(self, music_name):
+        if music_name in self.sounds and self.sounds[music_name]:
+            try:
+                if self.music_playing:
+                    pygame.mixer.music.stop()
+                
+                pygame.mixer.music.load(self.sounds[music_name])
+                pygame.mixer.music.set_volume(self.music_volume * self.master_volume)
+                pygame.mixer.music.play(-1)
+                self.music_playing = True
+            except pygame.error as e:
+                print(f"Error playing music {music_name}: {e}")
+    
+    def stop_music(self):
+        if self.music_playing:
+            pygame.mixer.music.stop()
+            self.music_playing = False
+    
+    def set_music_volume(self, volume):
+        self.music_volume = max(0.0, min(1.0, volume))
+        if self.music_playing:
+            pygame.mixer.music.set_volume(self.music_volume * self.master_volume)
+    
+    def update_master_volume_with_music(self):
+        if self.music_playing:
+            pygame.mixer.music.set_volume(self.music_volume * self.master_volume)
+
 def get_resource_path(relative_path):
-    """Get absolute path to resource, works for dev and for PyInstaller"""
     try:
         base_path = sys._MEIPASS
     except Exception:
@@ -62,8 +257,17 @@ class CarRacing:
         self.clock = pygame.time.Clock()
         self.gameDisplay = None
         
+        self._entropy_seed = None
+        self._game_random = random.Random()
+        self._replay_data = []
+        self._is_replay_mode = False
+        
+        self.sound_manager = SoundManager()
+        
         self.current_state = GameStates.MENU
         self.previous_state = GameStates.MENU
+        
+        self.reset_confirmation_active = False
         
         self.load_game_data()
         
@@ -72,12 +276,19 @@ class CarRacing:
         self.daily_challenge = self.generate_daily_challenge()
         
         self.initialize()
+        
+        self.sound_manager.play_music('menu_music')
 
-    def initialize(self):
+    def initialize(self, seed=None):
         self.crashed = False
         self.paused = False
         self.unpause_timer = 0
         self.show_countdown = False
+        
+        if seed is not None:
+            self.set_entropy_seed(seed)
+        elif self._entropy_seed is None:
+            self.generate_new_entropy_seed()
         
         self.base_score = 0
         self.bonus_score = 0
@@ -92,15 +303,21 @@ class CarRacing:
         
         self.near_miss_flash_timer = 0
         
+        self.engine_started = False
+        
         self.last_key_press_time = {"left": 0, "right": 0}
-        self.key_repeat_delay = 12
+        self.key_repeat_delay = 11
         self.key_pressed_last_frame = {"left": False, "right": False}
         
         self.difficulty_modes = ["Easy", "Normal", "Hard", "Insane"]
         self.current_difficulty = self.game_data.get("difficulty", 1)
         
-        self.available_cars = ["car.png", "car_blue.png", "car_red.png", "car_yellow.png"]
+        self.available_cars = ["car.png", "car_blue.png", "car_red.png", "special"]
         self.current_car = self.game_data.get("selected_car", 0)
+        
+        self.special_car_frame = 0
+        self.special_car_animation_timer = 0
+        self.special_car_animation_speed = 15
         
         self.games_played = self.game_data.get("games_played", 0)
         self.total_playtime = self.game_data.get("total_playtime", 0)
@@ -108,18 +325,30 @@ class CarRacing:
         self.current_streak = 0
 
         selected_car_filename = self.available_cars[self.current_car]
-        self.carImg = pygame.image.load(get_resource_path(os.path.join("assets", selected_car_filename)))
-        self.car_x_coordinate = 240
+        if selected_car_filename == "special":
+            try:
+                self.carImg_spc_frames = []
+                for i in range(12):
+                    frame_path = get_resource_path(os.path.join("assets", "spc", f"spc{i}.png"))
+                    frame_img = pygame.image.load(frame_path)
+                    self.carImg_spc_frames.append(frame_img)
+                self.carImg = self.carImg_spc_frames[0]
+            except pygame.error:
+                print("Warning: Special car images (spc0.png to spc11.png) not found in spc folder. Using car_yellow.png as fallback.")
+                self.carImg = pygame.image.load(get_resource_path(os.path.join("assets", "car_yellow.png")))
+        else:
+            self.carImg = pygame.image.load(get_resource_path(os.path.join("assets", selected_car_filename)))
+        self.car_x_coordinate = 215
         self.car_y_coordinate = (self.display_height * 0.8)
-        self.car_width = 49
+        self.car_width = 99
 
-        self.enemy_car = pygame.image.load(get_resource_path(os.path.join("assets", "car_red.png")))
-        self.enemy_car_startx = random.choice([240, 320, 440, 520])
+        self.enemy_car = pygame.image.load(get_resource_path(os.path.join("assets", "car_black.png")))
+        self.enemy_car_startx = self.deterministic_choice([215, 295, 415, 495])
         self.enemy_car_starty = -600
         
         difficulty_multiplier = [0.7, 1.0, 1.3, 1.6][self.current_difficulty]
         self.enemy_car_speed = int(5 * difficulty_multiplier)
-        self.enemy_car_width = 49
+        self.enemy_car_width = 99
         self.enemy_car_height = 100
 
         self.bgImg = pygame.image.load(get_resource_path(os.path.join("assets", "back.jpg")))
@@ -133,9 +362,67 @@ class CarRacing:
 
     def car(self, car_x_coordinate, car_y_coordinate):
         self.gameDisplay.blit(self.carImg, (car_x_coordinate, car_y_coordinate))
+    
+    def generate_new_entropy_seed(self):
+        """Generate a new entropy seed based on current time and system state"""
+        timestamp = int(time.time() * 1000000)
+        system_hash = hashlib.md5(f"{timestamp}{os.getpid()}{id(self)}".encode()).hexdigest()
+        self._entropy_seed = int(system_hash[:8], 16)
+        self._game_random.seed(self._entropy_seed)
+        print(f"Generated new entropy seed: {self._entropy_seed}")
+    
+    def set_entropy_seed(self, seed):
+        """Set a specific entropy seed for deterministic gameplay"""
+        self._entropy_seed = seed
+        self._game_random.seed(seed)
+        print(f"Set entropy seed to: {seed}")
+    
+    def get_entropy_seed(self):
+        """Get the current entropy seed"""
+        return self._entropy_seed
+    
+    def deterministic_choice(self, choices):
+        """Make a deterministic choice from a list using the entropy seed"""
+        if self._is_replay_mode and self._replay_data:
+            return self._replay_data.pop(0) if self._replay_data else choices[0]
+        else:
+            choice = self._game_random.choice(choices)
+            if not self._is_replay_mode:
+                self._replay_data.append(choice)
+            return choice
+    
+    def deterministic_randint(self, min_val, max_val):
+        """Generate a deterministic random integer using the entropy seed"""
+        if self._is_replay_mode and self._replay_data:
+            return self._replay_data.pop(0) if self._replay_data else min_val
+        else:
+            value = self._game_random.randint(min_val, max_val)
+            if not self._is_replay_mode:
+                self._replay_data.append(value)
+            return value
+    
+    def start_replay(self, seed, replay_data):
+        """Start replay mode with given seed and recorded data"""
+        self._is_replay_mode = True
+        self._entropy_seed = seed
+        self._game_random.seed(seed)
+        self._replay_data = replay_data.copy()
+        print(f"Starting replay with seed: {seed}")
+    
+    def stop_replay(self):
+        """Stop replay mode and return to normal gameplay"""
+        self._is_replay_mode = False
+        self._replay_data = []
+        print("Stopped replay mode")
+    
+    def get_replay_data(self):
+        """Get the current replay data for saving"""
+        return {
+            'seed': self._entropy_seed,
+            'data': self._replay_data.copy()
+        }
 
     def load_game_data(self):
-        """Load game data from JSON file"""
         try:
             data_path = get_resource_path(os.path.join("data", "game_data.json"))
             with open(data_path, "r") as f:
@@ -144,7 +431,6 @@ class CarRacing:
             self.create_default_game_data()
     
     def create_default_game_data(self):
-        """Create default game data structure"""
         self.game_data = {
             "high_scores": [],
             "difficulty": 1,
@@ -161,7 +447,6 @@ class CarRacing:
         }
     
     def ensure_game_data_exists(self):
-        """Ensure game data exists and is valid, recreate if necessary"""
         if not hasattr(self, 'game_data') or self.game_data is None:
             self.load_game_data()
             return
@@ -174,7 +459,6 @@ class CarRacing:
             pass
 
     def save_game_data(self):
-        """Save game data to JSON file"""
         if not hasattr(self, 'game_data') or self.game_data is None:
             self.create_default_game_data()
         
@@ -196,11 +480,10 @@ class CarRacing:
                 pass
     
     def init_achievements(self):
-        """Initialize achievement system"""
         self.achievements = [
             Achievement("first_game", "First Drive", "Play your first game", lambda: self.games_played >= 1),
             Achievement("score_1000", "Road Warrior", "Score 1000 points", lambda: self.total_score >= 1000),
-            Achievement("score_5000", "Highway Legend", "Score 5000 points", lambda: self.total_score >= 5000),
+            Achievement("score_5000", "Highway Legend", "Score 5000 points", lambda: self.total_score >= 5000 and self.current_difficulty >= 1),
             Achievement("near_miss_10", "Close Call", "Get 10 near misses in one game", lambda: self.near_miss_count >= 10),
             Achievement("lane_master", "Lane Master", "Change lanes 50 times in one game", lambda: self.lane_change_count >= 50),
             Achievement("survivor", "Survivor", "Survive for 2 minutes", lambda: self.survival_time >= 7200),
@@ -214,7 +497,6 @@ class CarRacing:
             achievement.unlocked = self.game_data.get("achievements", {}).get(achievement.id, False)
     
     def check_achievements(self):
-        """Check and unlock achievements"""
         self.ensure_game_data_exists()
         achievements_changed = False
         for achievement in self.achievements:
@@ -228,11 +510,10 @@ class CarRacing:
             self.save_game_data()
     
     def show_achievement_notification(self, achievement):
-        """Show achievement unlock notification"""
         print(f"Achievement Unlocked: {achievement.name} - {achievement.description}")
+        self.sound_manager.play_sound('achievement')
     
     def generate_daily_challenge(self):
-        """Generate daily challenge"""
         today = datetime.now().strftime("%Y-%m-%d")
         if self.game_data.get("last_daily_challenge") != today:
             challenges = [
@@ -241,7 +522,9 @@ class CarRacing:
                 {"type": "near_miss", "target": 15, "description": "Get 15 near misses"},
                 {"type": "lane_change", "target": 30, "description": "Change lanes 30 times"}
             ]
-            challenge = random.choice(challenges)
+            challenge_seed = int(hashlib.md5(today.encode()).hexdigest()[:8], 16)
+            challenge_random = random.Random(challenge_seed)
+            challenge = challenge_random.choice(challenges)
             challenge["completed"] = False
             self.game_data["last_daily_challenge"] = today
             self.game_data["daily_challenge"] = challenge
@@ -250,7 +533,6 @@ class CarRacing:
         return self.game_data.get("daily_challenge", {})
     
     def calculate_enhanced_score(self):
-        """Calculate score with bonuses"""
         self.base_score = self.count
         
         near_miss_bonus = self.near_miss_count * 10
@@ -265,33 +547,40 @@ class CarRacing:
         return self.total_score
     
     def check_near_miss(self):
-        """Check for near miss (enemy car passing close by)"""
-        if (abs(self.car_x_coordinate - self.enemy_car_startx) <= 60 and 
-            abs(self.car_y_coordinate - self.enemy_car_starty) <= 120):
+        if (abs(self.car_x_coordinate - self.enemy_car_startx) <= 50 and 
+            abs(self.car_y_coordinate - self.enemy_car_starty) <= 100):
             
             if not self.enemy_car_near_miss_counted:
                 self.near_miss_count += 1
                 self.enemy_car_near_miss_counted = True
                 self.near_miss_flash_timer = 30
+                self.sound_manager.play_sound('near_miss')
         
-        elif self.enemy_car_starty > self.car_y_coordinate + 100:
+        elif self.enemy_car_starty > self.car_y_coordinate + 50:
             self.enemy_car_near_miss_counted = False
     
     def unlock_car(self, car_index):
-        """Unlock a new car"""
         self.ensure_game_data_exists()
         if car_index not in self.game_data["unlocked_cars"]:
             self.game_data["unlocked_cars"].append(car_index)
             self.save_game_data()
+            self.sound_manager.play_sound('car_unlock')
     
     def check_car_unlocks(self):
-        """Check if new cars should be unlocked based on score"""
         if self.total_score >= 500 and 1 not in self.game_data["unlocked_cars"]:
             self.unlock_car(1)
         if self.total_score >= 1500 and 2 not in self.game_data["unlocked_cars"]:
             self.unlock_car(2)
         if self.total_score >= 3000 and 3 not in self.game_data["unlocked_cars"]:
             self.unlock_car(3)
+    
+    def update_special_car_animation(self):
+        if hasattr(self, 'carImg_spc_frames') and len(self.carImg_spc_frames) > 0:
+            self.special_car_animation_timer += 1
+            if self.special_car_animation_timer >= self.special_car_animation_speed:
+                self.special_car_animation_timer = 0
+                self.special_car_frame = (self.special_car_frame + 1) % len(self.carImg_spc_frames)
+                self.carImg = self.carImg_spc_frames[self.special_car_frame]
 
     def racing_window(self):
         self.gameDisplay = pygame.display.set_mode((self.display_width, self.display_height))
@@ -299,12 +588,13 @@ class CarRacing:
         self.main_game_loop()
     
     def main_game_loop(self):
-        """Main game loop with state management"""
         running = True
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                elif event.type == pygame.USEREVENT + 1:
+                    self.sound_manager.start_engine_loop()
                 else:
                     self.handle_state_events(event)
             
@@ -329,7 +619,6 @@ class CarRacing:
         pygame.quit()
     
     def handle_state_events(self, event):
-        """Handle events based on current state"""
         if self.current_state == GameStates.MENU:
             self.handle_menu_events(event)
         elif self.current_state == GameStates.PLAYING:
@@ -340,51 +629,92 @@ class CarRacing:
             self.handle_achievements_events(event)
     
     def handle_menu_events(self, event):
-        """Handle menu events"""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
+                self.sound_manager.play_sound('menu_select')
                 self.current_state = GameStates.PLAYING
                 self.initialize()
+                self.sound_manager.play_engine_sound(self.current_car)
+                self.sound_manager.play_music('game_music')
+                self.engine_started = True
             elif event.key == pygame.K_h:
+                self.sound_manager.play_sound('menu_select')
                 self.current_state = GameStates.HIGH_SCORES
             elif event.key == pygame.K_a:
+                self.sound_manager.play_sound('menu_select')
                 self.current_state = GameStates.ACHIEVEMENTS
             elif event.key == pygame.K_c:
+                self.sound_manager.play_sound('menu_select')
                 self.current_state = GameStates.CAR_SELECTION
             elif event.key == pygame.K_d:
+                self.sound_manager.play_sound('menu_select')
                 self.cycle_difficulty()
+            elif event.key == pygame.K_MINUS or event.key == pygame.K_KP_MINUS:
+                current_volume = self.sound_manager.master_volume
+                self.sound_manager.set_master_volume(current_volume - 0.1)
+                self.sound_manager.play_sound('menu_select')
+            elif event.key == pygame.K_PLUS or event.key == pygame.K_KP_PLUS or event.key == pygame.K_EQUALS:
+                current_volume = self.sound_manager.master_volume
+                self.sound_manager.set_master_volume(current_volume + 0.1)
+                self.sound_manager.play_sound('menu_select')
+            elif event.key == pygame.K_LEFTBRACKET:
+                current_music_volume = self.sound_manager.music_volume
+                self.sound_manager.set_music_volume(current_music_volume - 0.1)
+                self.sound_manager.play_sound('menu_select')
+            elif event.key == pygame.K_RIGHTBRACKET:
+                current_music_volume = self.sound_manager.music_volume
+                self.sound_manager.set_music_volume(current_music_volume + 0.1)
+                self.sound_manager.play_sound('menu_select')
+            elif event.key == pygame.K_m:
+                if self.sound_manager.master_volume > 0:
+                    self.sound_manager.set_master_volume(0)
+                else:
+                    self.sound_manager.set_master_volume(0.7)
+                self.sound_manager.play_sound('menu_select')
+            elif event.key == pygame.K_n:
+                if self.sound_manager.music_volume > 0:
+                    self.sound_manager.set_music_volume(0)
+                else:
+                    self.sound_manager.set_music_volume(0.7)
+                self.sound_manager.play_sound('menu_select')
+            elif event.key == pygame.K_s:
+                self.prompt_custom_seed()
             elif event.key == pygame.K_ESCAPE:
+                self.sound_manager.cleanup()
                 pygame.quit()
                 sys.exit()
     
     def handle_car_selection_events(self, event):
-        """Handle car selection events"""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
+                self.sound_manager.play_sound('menu_select')
                 self.previous_car()
             elif event.key == pygame.K_RIGHT:
+                self.sound_manager.play_sound('menu_select')
                 self.next_car()
             elif event.key == pygame.K_SPACE:
+                self.sound_manager.play_sound('menu_select')
                 self.select_car()
             elif event.key == pygame.K_ESCAPE:
+                self.sound_manager.play_sound('menu_select')
+                self.sound_manager.stop_engine_sound()
                 self.current_state = GameStates.MENU
+                self.sound_manager.play_music('menu_music')
     
     def cycle_difficulty(self):
-        """Cycle through difficulty modes"""
         self.ensure_game_data_exists()
         self.current_difficulty = (self.current_difficulty + 1) % len(self.difficulty_modes)
         self.game_data["difficulty"] = self.current_difficulty
         self.save_game_data()
     
     def previous_car(self):
-        """Select previous car if unlocked"""
         unlocked_cars = self.game_data["unlocked_cars"]
         current_index = unlocked_cars.index(self.current_car)
         self.current_car = unlocked_cars[current_index - 1]
         self.reload_car_image()
+        self.sound_manager.play_engine_sound(self.current_car, loop=False)
     
     def next_car(self):
-        """Select next car if unlocked"""
         unlocked_cars = self.game_data["unlocked_cars"]
         current_index = unlocked_cars.index(self.current_car)
         if current_index < len(unlocked_cars) - 1:
@@ -392,22 +722,34 @@ class CarRacing:
         else:
             self.current_car = unlocked_cars[0]
         self.reload_car_image()
+        self.sound_manager.play_engine_sound(self.current_car, loop=False)
     
     def select_car(self):
-        """Confirm car selection"""
         self.ensure_game_data_exists()
         self.game_data["selected_car"] = self.current_car
         self.save_game_data()
         self.reload_car_image()
         self.current_state = GameStates.MENU
+        self.sound_manager.stop_engine_sound()
     
     def reload_car_image(self):
-        """Reload car image based on current selection"""
         selected_car_filename = self.available_cars[self.current_car]
-        self.carImg = pygame.image.load(get_resource_path(os.path.join("assets", selected_car_filename)))
+        if selected_car_filename == "special":
+            try:
+                self.carImg_spc_frames = []
+                for i in range(12):
+                    frame_path = get_resource_path(os.path.join("assets", "spc", f"spc{i}.png"))
+                    frame_img = pygame.image.load(frame_path)
+                    self.carImg_spc_frames.append(frame_img)
+                self.carImg = self.carImg_spc_frames[0]
+                self.special_car_frame = 0
+            except pygame.error:
+                print("Warning: Special car images (spc0.png to spc11.png) not found in spc folder. Using car_yellow.png as fallback.")
+                self.carImg = pygame.image.load(get_resource_path(os.path.join("assets", "car_yellow.png")))
+        else:
+            self.carImg = pygame.image.load(get_resource_path(os.path.join("assets", selected_car_filename)))
 
     def update_menu(self):
-        """Update and draw main menu"""
         self.gameDisplay.fill(self.black)
         
         font_title = pygame.font.SysFont("comicsansms", 48, True)
@@ -432,16 +774,29 @@ class CarRacing:
             text = font_menu.render(option, True, self.white)
             self.gameDisplay.blit(text, (400 - text.get_width() // 2, 200 + i * 40))
         
+        font_small = pygame.font.SysFont("lucidaconsole", 16)
+        volume_percent = int(self.sound_manager.master_volume * 100)
+        volume_text = f"Sound Volume: {volume_percent}% (+/- to adjust, M to mute)"
+        volume_render = font_small.render(volume_text, True, self.yellow)
+        self.gameDisplay.blit(volume_render, (400 - volume_render.get_width() // 2, 460))
+        
+        music_volume_percent = int(self.sound_manager.music_volume * 100)
+        music_text = f"Music Volume: {music_volume_percent}% ([/] to adjust, N to mute)"
+        music_render = font_small.render(music_text, True, self.yellow)
+        self.gameDisplay.blit(music_render, (400 - music_render.get_width() // 2, 480))
+        
+        seed_text = f"Entropy Seed: {self._entropy_seed} (S to set custom seed)"
+        seed_render = font_small.render(seed_text, True, self.blue)
+        self.gameDisplay.blit(seed_render, (10, 10))
+        
         if self.daily_challenge:
-            font_small = pygame.font.SysFont("lucidaconsole", 16)
             challenge_text = f"Daily Challenge: {self.daily_challenge.get('description', 'N/A')}"
             if self.daily_challenge.get('completed', False):
-                challenge_text += " ✓"
+                challenge_text += " [COMPLETE]"
             text = font_small.render(challenge_text, True, self.yellow)
-            self.gameDisplay.blit(text, (10, 570))
+            self.gameDisplay.blit(text, (10, 550))
     
     def update_game(self):
-        """Update main game (equivalent to old run_car)"""
         if self.crashed:
             self.end_game()
             return
@@ -460,7 +815,7 @@ class CarRacing:
 
             if self.enemy_car_starty > self.display_height:
                 self.enemy_car_starty = 0 - self.enemy_car_height
-                self.enemy_car_startx = random.choice([240, 320, 440, 520])
+                self.enemy_car_startx = self.deterministic_choice([215, 295, 415, 495])
                 self.enemy_car_near_miss_counted = False
 
             self.car(self.car_x_coordinate, self.car_y_coordinate)
@@ -472,7 +827,14 @@ class CarRacing:
             self.check_achievements()
             self.check_car_unlocks()
             
+            if self.current_car == 3:
+                self.update_special_car_animation()
+            
             self.handle_continuous_input()
+            
+            if self.engine_started:
+                speed_factor = min(1.0, self.enemy_car_speed / 20.0)
+                self.sound_manager.update_engine_volume(speed_factor)
             
             self.display_enhanced_hud()
             
@@ -496,13 +858,23 @@ class CarRacing:
                     self.enemy_car_speed += 1
                     self.bg_speed += 1
 
-            if self.car_x_coordinate not in [240, 320, 440, 520]:
+            if self.car_x_coordinate not in [215, 295, 415, 495]:
+                self.sound_manager.play_sound('off_road')
+                self.sound_manager.stop_engine_sound()
+                self.engine_started = False
                 self.crashed = True
 
-            if (self.car_y_coordinate < self.enemy_car_starty + self.enemy_car_height and 
-                self.car_y_coordinate + 80 > self.enemy_car_starty):
-                if (self.car_x_coordinate + self.car_width > self.enemy_car_startx and 
-                    self.car_x_coordinate < self.enemy_car_startx + self.enemy_car_width):
+            if (self.car_y_coordinate + 20 < self.enemy_car_starty + self.enemy_car_height and 
+                self.car_y_coordinate + 50 > self.enemy_car_starty):
+                car_left = self.car_x_coordinate + 10
+                car_right = self.car_x_coordinate + self.car_width - 10
+                enemy_left = self.enemy_car_startx + 10
+                enemy_right = self.enemy_car_startx + self.enemy_car_width - 10
+                
+                if (car_right > enemy_left and car_left < enemy_right):
+                    self.sound_manager.play_sound('crash', volume_override=1.0)
+                    self.sound_manager.stop_engine_sound()
+                    self.engine_started = False
                     self.crashed = True
                     
         elif self.paused:
@@ -516,27 +888,23 @@ class CarRacing:
             self.display_countdown_timer()
     
     def update_pause(self):
-        """Update pause state"""
         self.display_pause_menu()
     
     def update_game_over(self):
-        """Update game over screen"""
         self.display_game_over_screen()
     
     def update_high_scores(self):
-        """Update high scores screen"""
         self.display_high_scores()
     
     def update_achievements(self):
-        """Update achievements screen"""
         self.display_achievements()
     
     def update_car_selection(self):
-        """Update car selection screen"""
+        if self.current_car == 3:
+            self.update_special_car_animation()
         self.display_car_selection()
     
     def handle_game_events(self, event):
-        """Handle game events (equivalent to old event handling)"""
         if event.type == pygame.ACTIVEEVENT:
             if event.gain == 0:
                 self.paused = True
@@ -559,37 +927,34 @@ class CarRacing:
                 pass
     
     def move_left(self):
-        """Handle left movement with lane change tracking"""
         old_x = self.car_x_coordinate
-        if self.car_x_coordinate == 320:
-            self.car_x_coordinate = 240
-        elif self.car_x_coordinate == 440:
-            self.car_x_coordinate = 320
-        elif self.car_x_coordinate == 520:
-            self.car_x_coordinate = 440
-        elif self.car_x_coordinate == 240:
-            self.car_x_coordinate = 200
+        if self.car_x_coordinate == 295:
+            self.car_x_coordinate = 215
+        elif self.car_x_coordinate == 415:
+            self.car_x_coordinate = 295
+        elif self.car_x_coordinate == 495:
+            self.car_x_coordinate = 415
+        elif self.car_x_coordinate == 215:
+            self.car_x_coordinate = 175
         
-        if old_x != self.car_x_coordinate and self.car_x_coordinate in [240, 320, 440, 520]:
+        if old_x != self.car_x_coordinate and self.car_x_coordinate in [215, 295, 415, 495]:
             self.lane_change_count += 1
     
     def move_right(self):
-        """Handle right movement with lane change tracking"""
         old_x = self.car_x_coordinate
-        if self.car_x_coordinate == 240:
-            self.car_x_coordinate = 320
-        elif self.car_x_coordinate == 320:
-            self.car_x_coordinate = 440
-        elif self.car_x_coordinate == 440:
-            self.car_x_coordinate = 520
-        elif self.car_x_coordinate == 520:
-            self.car_x_coordinate = 560
+        if self.car_x_coordinate == 215:
+            self.car_x_coordinate = 295
+        elif self.car_x_coordinate == 295:
+            self.car_x_coordinate = 415
+        elif self.car_x_coordinate == 415:
+            self.car_x_coordinate = 495
+        elif self.car_x_coordinate == 495:
+            self.car_x_coordinate = 535
             
-        if old_x != self.car_x_coordinate and self.car_x_coordinate in [240, 320, 440, 520]:
+        if old_x != self.car_x_coordinate and self.car_x_coordinate in [215, 295, 415, 495]:
             self.lane_change_count += 1
 
     def handle_continuous_input(self):
-        """Handle continuous input for smoother movement"""
         keys = pygame.key.get_pressed()
         current_frame = self.count
         
@@ -616,7 +981,6 @@ class CarRacing:
             self.key_pressed_last_frame["right"] = False
     
     def display_enhanced_hud(self):
-        """Display enhanced HUD with more information"""
         font = pygame.font.SysFont("lucidaconsole", 20)
         font_small = pygame.font.SysFont("lucidaconsole", 14)
         
@@ -648,7 +1012,9 @@ class CarRacing:
         self.gameDisplay.blit(time_text, (650, 50))
     
     def end_game(self):
-        """Handle game end and score saving"""
+        self.sound_manager.stop_engine_sound()
+        self.engine_started = False
+        
         self.ensure_game_data_exists()
         self.games_played += 1
         self.game_data["games_played"] = self.games_played
@@ -695,7 +1061,6 @@ class CarRacing:
         self.current_state = GameStates.GAME_OVER
     
     def display_game_over_screen(self):
-        """Display game over screen with statistics"""
         self.gameDisplay.fill(self.black)
         
         font_title = pygame.font.SysFont("comicsansms", 72, True)
@@ -725,9 +1090,10 @@ class CarRacing:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_SPACE]:
             self.current_state = GameStates.MENU
+            self.sound_manager.play_music('menu_music')
+            self.sound_manager.play_music('menu_music')
     
     def display_high_scores(self):
-        """Display high scores screen"""
         self.gameDisplay.fill(self.black)
         
         font_title = pygame.font.SysFont("comicsansms", 48, True)
@@ -760,37 +1126,65 @@ class CarRacing:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_ESCAPE]:
             self.current_state = GameStates.MENU
+            self.sound_manager.play_music('menu_music')
     
     def display_achievements(self):
-        """Display achievements screen"""
         self.gameDisplay.fill(self.black)
         
         font_title = pygame.font.SysFont("comicsansms", 48, True)
         font_text = pygame.font.SysFont("lucidaconsole", 16)
         font_small = pygame.font.SysFont("lucidaconsole", 14)
         
-        title = font_title.render("ACHIEVEMENTS", True, self.green)
-        self.gameDisplay.blit(title, (400 - title.get_width() // 2, 50))
-        
-        for i, achievement in enumerate(self.achievements):
-            color = self.green if achievement.unlocked else self.red
-            status = "✓" if achievement.unlocked else "✗"
-            text = f"{status} {achievement.name}: {achievement.description}"
-            rendered_text = font_text.render(text, True, color)
-            self.gameDisplay.blit(rendered_text, (50, 120 + i * 30))
-        
-        instructions = [
-            "ESC - Back to Menu",
-            "R - Reset Progress (WARNING: This will delete all your data!)"
-        ]
-        
-        for i, instruction in enumerate(instructions):
-            color = self.yellow if i == 0 else self.red
-            text = font_small.render(instruction, True, color)
-            self.gameDisplay.blit(text, (50, 450 + i * 20))
+        if self.reset_confirmation_active:
+            title = font_title.render("RESET PROGRESS", True, self.red)
+            self.gameDisplay.blit(title, (400 - title.get_width() // 2, 50))
+            
+            warning_text = font_title.render("WARNING!", True, self.red)
+            self.gameDisplay.blit(warning_text, (400 - warning_text.get_width() // 2, 150))
+            
+            confirm_lines = [
+                "This will permanently delete ALL your progress:",
+                "- All achievements",
+                "- High scores", 
+                "- Car unlocks",
+                "- Settings",
+                "",
+                "Are you sure you want to continue?"
+            ]
+            
+            for i, line in enumerate(confirm_lines):
+                color = self.white if line else self.white
+                text = font_text.render(line, True, color)
+                self.gameDisplay.blit(text, (400 - text.get_width() // 2, 220 + i * 25))
+            
+            yes_text = font_title.render("Y - YES, DELETE EVERYTHING", True, self.red)
+            self.gameDisplay.blit(yes_text, (400 - yes_text.get_width() // 2, 420))
+            
+            no_text = font_title.render("N - NO, KEEP MY DATA", True, self.green)
+            self.gameDisplay.blit(no_text, (400 - no_text.get_width() // 2, 470))
+            
+        else:
+            title = font_title.render("ACHIEVEMENTS", True, self.green)
+            self.gameDisplay.blit(title, (400 - title.get_width() // 2, 50))
+            
+            for i, achievement in enumerate(self.achievements):
+                color = self.green if achievement.unlocked else self.red
+                status = "[UNLOCKED]" if achievement.unlocked else "[LOCKED]"
+                text = f"{status} {achievement.name}: {achievement.description}"
+                rendered_text = font_text.render(text, True, color)
+                self.gameDisplay.blit(rendered_text, (50, 120 + i * 30))
+            
+            instructions = [
+                "ESC - Back to Menu",
+                "R - Reset Progress (WARNING: This will delete all your data!)"
+            ]
+            
+            for i, instruction in enumerate(instructions):
+                color = self.yellow if i == 0 else self.red
+                text = font_small.render(instruction, True, color)
+                self.gameDisplay.blit(text, (50, 450 + i * 20))
     
     def display_car_selection(self):
-        """Display car selection screen"""
         self.gameDisplay.fill(self.black)
         
         font_title = pygame.font.SysFont("comicsansms", 48, True)
@@ -803,8 +1197,8 @@ class CarRacing:
         self.gameDisplay.blit(self.carImg, (400 - self.carImg.get_width() // 2, preview_y))
         
         unlocked_cars = self.game_data["unlocked_cars"]
-        car_names = ["Default", "Blue Racer", "Red Speed", "Yellow Lightning"]
-        
+        car_names = ["Default", "Lamborghini", "Ferrari", "Rolls Royce"]
+
         for i, car_index in enumerate(unlocked_cars):
             color = self.yellow if car_index == self.current_car else self.white
             car_text = f"{car_names[car_index]}"
@@ -825,7 +1219,7 @@ class CarRacing:
             self.gameDisplay.blit(text, (400 - text.get_width() // 2, 450 + i * 30))
 
     def display_message(self, msg):
-        """Legacy display message method - now redirects to game over"""
+        """Display a message to the user (currently just triggers game over)"""
         self.current_state = GameStates.GAME_OVER
 
     def display_pause_menu(self):
@@ -876,10 +1270,6 @@ class CarRacing:
     def run_enemy_car(self, thingx, thingy):
         self.gameDisplay.blit(self.enemy_car, (thingx, thingy))
 
-    def highscore(self, count):
-        """Legacy method - now uses enhanced HUD"""
-        pass
-
     def display_credit(self):
         font = pygame.font.SysFont("lucidaconsole", 14)
         text = font.render(f"SpeedyHighway v{__version__}", True, self.white)
@@ -892,33 +1282,37 @@ class CarRacing:
         self.gameDisplay.blit(text, (600, 560))
 
     def check_speed_demon_achievement(self):
-        """Check if Speed Demon achievement should be unlocked based on difficulty"""
-        if self.current_difficulty == 0:
-            return self.enemy_car_speed >= 10
-        elif self.current_difficulty == 1:
-            return self.enemy_car_speed >= 15
-        elif self.current_difficulty == 2:
-            return self.enemy_car_speed >= 18
-        elif self.current_difficulty == 3:
-            return self.enemy_car_speed >= 20
+        if self.current_difficulty >= 2:
+            if self.current_difficulty == 2:
+                return self.enemy_car_speed >= 18
+            elif self.current_difficulty == 3:
+                return self.enemy_car_speed >= 20
         return False
     
     def check_speed_god_achievement(self):
-        """Check if Speed God achievement should be unlocked (only in Insane difficulty)"""
         if self.current_difficulty == 3:
             return self.enemy_car_speed >= 40
         return False
     
     def handle_achievements_events(self, event):
-        """Handle achievements screen events"""
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                self.current_state = GameStates.MENU
-            elif event.key == pygame.K_r:
-                self.reset_progress()
+            if self.reset_confirmation_active:
+                if event.key == pygame.K_y:
+                    self.reset_progress()
+                    self.reset_confirmation_active = False
+                    self.sound_manager.play_sound('menu_select')
+                elif event.key == pygame.K_n or event.key == pygame.K_ESCAPE:
+                    self.reset_confirmation_active = False
+                    self.sound_manager.play_sound('menu_select')
+            else:
+                if event.key == pygame.K_ESCAPE:
+                    self.current_state = GameStates.MENU
+                    self.sound_manager.play_music('menu_music')
+                elif event.key == pygame.K_r:
+                    self.reset_confirmation_active = True
+                    self.sound_manager.play_sound('menu_select')
     
     def reset_progress(self):
-        """Reset all game progress including achievements, scores, and settings"""
         self.create_default_game_data()
         self.save_game_data()
 
@@ -939,6 +1333,17 @@ class CarRacing:
         self.daily_challenge = self.generate_daily_challenge()
         
         print("Progress reset successfully!")
+    
+    def prompt_custom_seed(self):
+        """Prompt user for custom entropy seed (simplified version for demo)"""
+        try:
+            seed_input = input("Enter custom entropy seed (integer): ")
+            custom_seed = int(seed_input)
+            self.set_entropy_seed(custom_seed)
+            print(f"Custom entropy seed set to: {custom_seed}")
+        except (ValueError, EOFError):
+            print("Invalid seed input. Generating new random seed.")
+            self.generate_new_entropy_seed()
     
 if __name__ == '__main__':
     car_racing = CarRacing()

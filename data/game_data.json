@@ -9,11 +9,11 @@
   "games_played": 0,
   "total_playtime": 0,
   "best_streak": 0,
-  "last_daily_challenge": "2025-07-15",
+  "last_daily_challenge": "2025-09-16",
   "daily_challenge": {
-    "type": "lane_change",
-    "target": 30,
-    "description": "Change lanes 30 times",
+    "type": "near_miss",
+    "target": 15,
+    "description": "Get 15 near misses",
     "completed": false
   },
   "highest_difficulty_reached": 0,

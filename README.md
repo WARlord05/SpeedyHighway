@@ -1,20 +1,27 @@
-# 🏎️ Speedy Highway - Racing Game v1.0.1 Enhanced Edition
+# 🏎️ Speedy Highway - Racing Game v1.1.0 Enhanced Safety Edition
 
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)](https://github.com/WARlord05/SpeedyHighway)
-[![Version](https://img.shields.io/badge/Version-1.0.1-blue)](https://github.com/WARlord05/SpeedyHighway/releases)
+[![Version](https://img.shields.io/badge/Version-1.1.0-blue)](https://github.com/WARlord05/SpeedyHighway/releases)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2064--bit-lightgrey)](https://github.com/WARlord05/SpeedyHighway)
 [![License](https://img.shields.io/badge/License-MIT-green)](https://github.com/WARlord05/SpeedyHighway/blob/main/LICENSE)
 
 ## 🎮 Overview
 
-A thrilling 2D highway racing game built with Python and Pygame featuring enhanced mechanics, multiple difficulty levels, achievement system, car unlocking, and persistent game data storage with robust error handling.
+A thrilling 2D highway racing game built with Python and Pygame featuring enhanced mechanics, multiple difficulty levels, achievement system, car unlocking, and persistent game data storage with robust error handling. **Version 1.1.0** introduces comprehensive safety features to prevent accidental data loss.
 
 ### ✅ What You Get:
-- **SpeedyHighway.exe** - Fully portable game executable
+- **SpeedyHighway.exe** - Fully portable game executable (v1.1.0)
+- Enhanced safety features with confirmation dialogs
 - All assets and data files bundled inside the executable
 - No Python installation required on target computers
 - Works on any Windows system (64-bit)
 - Enhanced antivirus compatibility features
+
+### 🛡️ New in v1.1.0 - Enhanced Safety Features:
+- **Two-Step Reset Confirmation**: Prevents accidental data loss with Y/N confirmation
+- **Interactive Warning Dialogs**: Clear visual feedback before destructive operations
+- **Multiple Safeguards**: ESC and N key cancellation options
+- **Better User Experience**: Comprehensive information about consequences before actions
 
 ## 🚀 Quick Start
 
@@ -31,8 +38,14 @@ A thrilling 2D highway racing game built with Python and Pygame featuring enhanc
 
 ### 🎯 Game Controls
 - **LEFT/RIGHT arrows**: Move car between lanes
-- **ESC**: Pause/Resume game
+- **ESC**: Pause/Resume game or cancel confirmation dialogs
 - **Mouse click**: Resume from pause
+
+### 🛡️ Safety Features (New in v1.1.0)
+- **R key** (in achievements menu): Initiate reset progress with confirmation
+- **Y key** (in confirmation dialog): Confirm reset after seeing warnings
+- **N key** (in confirmation dialog): Cancel reset and keep your data
+- **ESC key** (in confirmation dialog): Safe cancellation option
 
 ## 🎮 Game Features
 
@@ -50,7 +63,8 @@ A thrilling 2D highway racing game built with Python and Pygame featuring enhanc
 ✅ **High score tracking** per difficulty  
 ✅ **Pause/resume functionality**  
 ✅ **Auto-save game progress**  
-✅ **Reset progress functionality** (R key in achievements menu)  
+✅ **Enhanced Reset Progress** with confirmation dialogs (NEW in v1.1.0)  
+✅ **Two-step safety confirmation** prevents accidental data loss  
 
 ## 🏁 Difficulty Levels
 
@@ -88,6 +102,26 @@ Unlock new cars by achieving high scores:
 | **Red Speed** | Score 1500+ points | High-performance red car |
 | **Yellow Lightning** | Score 3000+ points | Ultimate speed machine |
 
+## 🆕 What's New in Version 1.1.0
+
+### 🛡️ Enhanced Safety Features
+- **Two-Step Reset Confirmation**: Added comprehensive Y/N confirmation dialog before resetting progress
+- **Clear Visual Warnings**: Red warning text with detailed information about data deletion consequences
+- **Multiple Safeguards**: ESC and N key both provide safe cancellation options
+- **Interactive Experience**: Full-screen confirmation dialog with clear choices before any destructive operations
+
+### 🎯 Improved User Experience
+- **Accident Prevention**: No more accidental progress resets
+- **Better Feedback**: Clear visual indicators for all user actions
+- **Enhanced Safety**: Multiple opportunities to cancel before data loss
+- **Maintained Performance**: All new features with zero impact on game performance
+
+### 🔧 Technical Improvements
+- Updated to version 1.1.0 with enhanced build metadata
+- Improved confirmation dialog system architecture
+- Enhanced state management for safety features
+- Backward compatible with all existing save files
+
 ## 📦 Distribution & Sharing
 
 ### Easy Sharing Options
@@ -123,7 +157,7 @@ Add `SpeedyHighway.exe` to your antivirus whitelist/exclusions:
 - **File name**: `SpeedyHighway.exe`
 - **Publisher**: WARlord05 Games
 - **Description**: Speedy Highway Racing Game - Enhanced Edition
-- **Version**: 1.0.1.0
+- **Version**: 1.1.0
 - **Source**: Built from open source Python code with antivirus compatibility features
 
 #### 3. 🔄 Verification Steps
@@ -142,9 +176,9 @@ Add `SpeedyHighway.exe` to your antivirus whitelist/exclusions:
 - **Graphics**: DirectX-compatible graphics card
 
 ### Technical Details
-- **Version**: 1.0.1 Enhanced Edition
+- **Version**: 1.1.0 Enhanced Safety Edition
 - **Author**: Tanay Vidhate (WARlord05)
-- **Date**: July 2025
+- **Release Date**: September 2025
 - **Engine**: Python 3.13+ with Pygame 2.6.1+
 - **Platform**: Windows 64-bit
 
@@ -159,9 +193,11 @@ Add `SpeedyHighway.exe` to your antivirus whitelist/exclusions:
 
 ```
 SpeedyHighway/
-├── SpeedyHighway.exe          # Main executable (ready to run)
-├── car.py                     # Source code
-├── README.md                  # This file
+├── SpeedyHighway.exe          # Main executable v1.1.0 (ready to run)
+├── SpeedyHighway_v1.0.1_backup.exe  # Previous version backup
+├── car.py                     # Source code (v1.1.0)
+├── README.md                  # This file (updated for v1.1.0)
+├── RELEASE_NOTES_v1.1.0.md    # New release documentation
 ├── assets/                    # Game assets (bundled in exe)
 ├── data/                      # Game save data
 ├── project/                   # Build system and development files
@@ -169,7 +205,7 @@ SpeedyHighway/
 │   ├── PROJECT_STRUCTURE.txt # Technical structure details
 │   └── SpeedyHighway.spec    # PyInstaller specification
 └── docs/                      # Documentation
-    └── PROJECT_DOCUMENTATION.md # Comprehensive documentation
+    └── PROJECT_DOCUMENTATION.md # Comprehensive documentation (updated)
 ```
 
 ## 🔧 Robust Data Handling
@@ -188,6 +224,7 @@ The game includes comprehensive data persistence that automatically handles:
 - **Achievements Not Unlocking**: Check achievements menu (A key)
 - **Save Data Lost**: Backup `data/game_data.json` file
 - **Antivirus Issues**: Use whitelist solutions above
+- **Reset Confirmation**: Press Y to confirm, N or ESC to cancel (NEW in v1.1.0)
 
 ### Getting Help
 - Check the [Issues](https://github.com/WARlord05/SpeedyHighway/issues) section
@@ -197,12 +234,15 @@ The game includes comprehensive data persistence that automatically handles:
 ## 📚 Documentation
 
 - **Quick Start**: This README file
+- **Release Notes**: `RELEASE_NOTES_v1.1.0.md` (NEW)
 - **Technical Details**: `project/PROJECT_STRUCTURE.txt`
 - **Comprehensive Guide**: `docs/PROJECT_DOCUMENTATION.md`
 
 ## 🎉 Enjoy the Game!
 
-Thank you for playing **Speedy Highway v1.0.1 Enhanced Edition**!
+Thank you for playing **Speedy Highway v1.1.0 Enhanced Safety Edition**!
+
+**🆕 New in v1.1.0**: Enhanced safety features prevent accidental data loss while maintaining all the excitement of high-speed racing!
 
 ---
 
