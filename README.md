@@ -9,7 +9,8 @@
 
 A thrilling 2D highway racing game built with Python and Pygame featuring enhanced mechanics, multiple difficulty levels, achievement system, car unlocking, and persistent game data storage with robust error handling. **Version 1.1.0** introduces comprehensive safety features to prevent accidental data loss.
 
-### ✅ What You Get:
+### ✅ What You Get
+
 - **SpeedyHighway.exe** - Fully portable game executable (v1.1.0)
 - Enhanced safety features with confirmation dialogs
 - All assets and data files bundled inside the executable
@@ -17,7 +18,8 @@ A thrilling 2D highway racing game built with Python and Pygame featuring enhanc
 - Works on any Windows system (64-bit)
 - Enhanced antivirus compatibility features
 
-### 🛡️ New in v1.1.0 - Enhanced Safety Features:
+### 🛡️ New in v1.1.0 - Enhanced Safety Features
+
 - **Two-Step Reset Confirmation**: Prevents accidental data loss with Y/N confirmation
 - **Interactive Warning Dialogs**: Clear visual feedback before destructive operations
 - **Multiple Safeguards**: ESC and N key cancellation options
@@ -26,6 +28,7 @@ A thrilling 2D highway racing game built with Python and Pygame featuring enhanc
 ## 🚀 Quick Start
 
 ### How to Run the Game
+
 1. Navigate to the SpeedyHighway folder
 2. Double-click `SpeedyHighway.exe`
 3. Use the menu to navigate:
@@ -37,11 +40,13 @@ A thrilling 2D highway racing game built with Python and Pygame featuring enhanc
    - **ESC**: Quit
 
 ### 🎯 Game Controls
+
 - **LEFT/RIGHT arrows**: Move car between lanes
 - **ESC**: Pause/Resume game or cancel confirmation dialogs
 - **Mouse click**: Resume from pause
 
 ### 🛡️ Safety Features (New in v1.1.0)
+
 - **R key** (in achievements menu): Initiate reset progress with confirmation
 - **Y key** (in confirmation dialog): Confirm reset after seeing warnings
 - **N key** (in confirmation dialog): Cancel reset and keep your data
@@ -50,6 +55,7 @@ A thrilling 2D highway racing game built with Python and Pygame featuring enhanc
 ## 🎮 Game Features
 
 ### Core Gameplay
+
 ✅ **Multi-lane highway racing** with progressive difficulty  
 ✅ **Near miss detection system** with score bonuses  
 ✅ **Lane change tracking** and scoring  
@@ -57,6 +63,7 @@ A thrilling 2D highway racing game built with Python and Pygame featuring enhanc
 ✅ **Enhanced HUD** with detailed statistics  
 
 ### Advanced Features
+
 ✅ **Car selection system** with unlockable vehicles  
 ✅ **Achievement system** with various challenges  
 ✅ **Daily challenges** for extra excitement  
@@ -105,18 +112,21 @@ Unlock new cars by achieving high scores:
 ## 🆕 What's New in Version 1.1.0
 
 ### 🛡️ Enhanced Safety Features
+
 - **Two-Step Reset Confirmation**: Added comprehensive Y/N confirmation dialog before resetting progress
 - **Clear Visual Warnings**: Red warning text with detailed information about data deletion consequences
 - **Multiple Safeguards**: ESC and N key both provide safe cancellation options
 - **Interactive Experience**: Full-screen confirmation dialog with clear choices before any destructive operations
 
 ### 🎯 Improved User Experience
+
 - **Accident Prevention**: No more accidental progress resets
 - **Better Feedback**: Clear visual indicators for all user actions
 - **Enhanced Safety**: Multiple opportunities to cancel before data loss
 - **Maintained Performance**: All new features with zero impact on game performance
 
 ### 🔧 Technical Improvements
+
 - Updated to version 1.1.0 with enhanced build metadata
 - Improved confirmation dialog system architecture
 - Enhanced state management for safety features
@@ -125,6 +135,7 @@ Unlock new cars by achieving high scores:
 ## 📦 Distribution & Sharing
 
 ### Easy Sharing Options
+
 ✅ **Direct Sharing**: Copy `SpeedyHighway.exe` to any location and run  
 ✅ **USB/Portable**: Copy to USB drive and run from any Windows computer  
 ✅ **Game Folder**: Create a folder, copy the exe, and include documentation  
@@ -134,11 +145,13 @@ Unlock new cars by achieving high scores:
 > **Important:** If your antivirus software flags `SpeedyHighway.exe` as suspicious, this is a **FALSE POSITIVE**.
 
 ### Why This Happens
+
 - PyInstaller bundles Python runtime, which some antivirus software incorrectly flags
 - The executable is unsigned, which triggers heuristic detection
 - This is a **very common issue** with Python executables
 
 ### Our Antivirus Compatibility Measures
+
 ✅ Enhanced metadata with proper company information  
 ✅ Disabled UPX compression (reduces false positives)  
 ✅ Standard executable structure without obfuscation  
@@ -148,12 +161,15 @@ Unlock new cars by achieving high scores:
 ### Solutions
 
 #### 1. 🔒 Whitelist the File (Recommended)
+
 Add `SpeedyHighway.exe` to your antivirus whitelist/exclusions:
+
 - **Windows Defender**: Virus & threat protection → Exclusions → Add file
 - **McAfee**: Real-Time Scanning → Excluded Files → Add `SpeedyHighway.exe`
 - **Norton**: Settings → Antivirus → Exclusions → Configure → Add `SpeedyHighway.exe`
 
 #### 2. ✅ Verify the File is Safe
+
 - **File name**: `SpeedyHighway.exe`
 - **Publisher**: WARlord05 Games
 - **Description**: Speedy Highway Racing Game - Enhanced Edition
@@ -161,6 +177,7 @@ Add `SpeedyHighway.exe` to your antivirus whitelist/exclusions:
 - **Source**: Built from open source Python code with antivirus compatibility features
 
 #### 3. 🔄 Verification Steps
+
 1. Check file properties - should show version info and publisher
 2. File size should be approximately 27-30 MB
 3. Scan with multiple antivirus engines online (like VirusTotal)
@@ -170,12 +187,14 @@ Add `SpeedyHighway.exe` to your antivirus whitelist/exclusions:
 ## 🔧 Technical Information
 
 ### System Requirements
+
 - **Operating System**: Windows 7/8/10/11 (64-bit recommended)
 - **Memory**: 100MB RAM minimum
 - **Storage**: 50MB free disk space
 - **Graphics**: DirectX-compatible graphics card
 
 ### Technical Details
+
 - **Version**: 1.1.0 Enhanced Safety Edition
 - **Author**: Tanay Vidhate (WARlord05)
 - **Release Date**: September 2025
@@ -183,6 +202,7 @@ Add `SpeedyHighway.exe` to your antivirus whitelist/exclusions:
 - **Platform**: Windows 64-bit
 
 ### For Developers
+
 - **Build Command**: `build.bat` (in project folder)
 - **Spec File**: `SpeedyHighway.spec` (preserved)
 - **Version Info**: `version_info.txt` (antivirus compatibility metadata)
@@ -191,7 +211,7 @@ Add `SpeedyHighway.exe` to your antivirus whitelist/exclusions:
 
 ## 📁 Project Structure
 
-```
+```text
 SpeedyHighway/
 ├── SpeedyHighway.exe          # Main executable v1.1.0 (ready to run)
 ├── SpeedyHighway_v1.0.1_backup.exe  # Previous version backup
@@ -211,6 +231,7 @@ SpeedyHighway/
 ## 🔧 Robust Data Handling
 
 The game includes comprehensive data persistence that automatically handles:
+
 - Missing or corrupted `game_data.json` files
 - JSON parsing errors
 - Permission errors with alternative save locations
@@ -220,6 +241,7 @@ The game includes comprehensive data persistence that automatically handles:
 ## 🆘 Support & Troubleshooting
 
 ### Common Issues
+
 - **Game Won't Start**: Try running as administrator
 - **Achievements Not Unlocking**: Check achievements menu (A key)
 - **Save Data Lost**: Backup `data/game_data.json` file
@@ -227,6 +249,7 @@ The game includes comprehensive data persistence that automatically handles:
 - **Reset Confirmation**: Press Y to confirm, N or ESC to cancel (NEW in v1.1.0)
 
 ### Getting Help
+
 - Check the [Issues](https://github.com/WARlord05/SpeedyHighway/issues) section
 - Submit bug reports with system information
 - Review the comprehensive documentation in `docs/`
@@ -238,7 +261,7 @@ The game includes comprehensive data persistence that automatically handles:
 - **Technical Details**: `project/PROJECT_STRUCTURE.txt`
 - **Comprehensive Guide**: `docs/PROJECT_DOCUMENTATION.md`
 
-## 🎉 Enjoy the Game!
+## 🎉 Enjoy the Game
 
 Thank you for playing **Speedy Highway v1.1.0 Enhanced Safety Edition**!
 
