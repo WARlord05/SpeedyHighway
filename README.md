@@ -1,4 +1,4 @@
-# 🏎️ Speedy Highway - Racing Game v1.1.0 Enhanced Safety Edition
+# 🏎️ Speedy Highway - Racing Game v1.1.0
 
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)](https://github.com/WARlord05/SpeedyHighway)
 [![Version](https://img.shields.io/badge/Version-1.1.0-blue)](https://github.com/WARlord05/SpeedyHighway/releases)

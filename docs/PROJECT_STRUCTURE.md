@@ -1,40 +1,46 @@
-SpeedyHighway v1.0.1 - Technical Project Structure
+SpeedyHighway v1.1.0 - Technical Project Structure
 =================================================
 
 Author: Tanay Vidhate (WARlord05)
-Date: July 15, 2025
-Status: Production Ready - Enhanced Edition
+Date: September 16, 2025
+Status: Production Ready - Enhanced Safety Edition
 
 DIRECTORY STRUCTURE
 ===================
 
 SpeedyHighway/
-├── car.py                      # Main game source code (943 lines)
-├── SpeedyHighway.exe           # Built executable (production ready)
-├── README.txt                  # Basic project information
+├── car.py                      # Main game source code (v1.1.0)
+├── SpeedyHighway.exe           # Built executable v1.1.0 (production ready)
+├── SpeedyHighway_v1.0.1_backup.exe # Previous version backup
+├── README.md                   # Project overview and quick start guide
+├── RELEASE_NOTES_v1.1.0.md     # Version 1.1.0 release documentation
 ├── assets/                     # Game assets directory
 │   ├── back.jpg               # Background road image
 │   ├── car.png                # Default player car sprite
 │   ├── car_blue.png           # Blue car sprite (unlockable)
 │   ├── car_red.png            # Red car sprite (unlockable)
-│   └── car_yellow.png         # Yellow car sprite (unlockable)
+│   ├── car_yellow.png         # Yellow car sprite (unlockable)
+│   └── spc/                   # Special car animation frames
+│       ├── spc0.png           # Special car frame 0
+│       ├── spc1.png           # Special car frame 1
+│       └── ...                # Frames 2-11 for 12-frame animation
 ├── data/                      # Game data and save files
 │   └── game_data.json         # Player progress, achievements, scores
 ├── docs/                      # Documentation directory
-│   └── PROJECT_DOCUMENTATION.md # Comprehensive project documentation
+│   ├── PROJECT_DOCUMENTATION.md # Comprehensive project documentation
+│   └── PROJECT_STRUCTURE.md  # This file (technical structure details)
 └── project/                   # Build system and development files
     ├── build.bat              # Main build script
-    ├── PROJECT_STRUCTURE.txt # This file (technical structure details)
     ├── SpeedyHighway.spec     # PyInstaller specification
-    ├── version_info.py        # Version information module
-    └── version_info.txt       # Executable metadata for antivirus compatibility
+    ├── version_info.py        # Version information module (v1.1.0)
+    └── version_info.txt       # Executable metadata for antivirus compatibility (v1.1.0)
 
 CORE COMPONENTS
 ===============
 
 Main Game File (car.py)
 -----------------------
-- Total Lines: 938
+- Total Lines: Updated for v1.1.0
 - Language: Python 3.13+
 - Dependencies: pygame, json, os, sys, random, datetime
 
@@ -51,7 +57,8 @@ Key Features:
 - Enhanced scoring system with bonuses
 - Daily challenge system
 - High score tracking per difficulty
-- Reset progress functionality
+- Enhanced reset progress functionality with confirmation dialogs (NEW v1.1.0)
+- Two-step safety confirmation system (NEW v1.1.0)
 - Robust data persistence with error handling
 
 GAME DATA STRUCTURE
@@ -139,7 +146,12 @@ Gameplay Controls:
 
 Achievement Menu:
 - ESC: Return to menu
-- R: Reset Progress (WARNING: Deletes all data)
+- R: Initiate reset progress (NEW v1.1.0 - opens confirmation dialog)
+
+Reset Progress Confirmation (NEW v1.1.0):
+- Y: Confirm reset and delete all data
+- N: Cancel reset and keep data
+- ESC: Cancel reset and return to achievements menu
 
 Car Selection:
 - LEFT/RIGHT: Navigate cars
@@ -197,6 +209,16 @@ Antivirus Compatibility:
 RECENT IMPROVEMENTS
 ==================
 
+Version 1.1.0 - Enhanced Safety Edition (September 16, 2025):
+- Enhanced reset progress functionality with confirmation dialogs
+- Two-step safety confirmation system (Y/N prompts)
+- ESC cancellation support in all confirmation dialogs
+- Improved user experience with clear visual warnings
+- Prevention of accidental data loss through enhanced UI flow
+- Maintained all existing functionality with added safety layers
+
+Version 1.0.1 and Earlier Improvements:
+
 Data Synchronization Fixes:
 - Fixed achievement persistence after reset
 - Enhanced game data synchronization
@@ -245,6 +267,8 @@ Performance Considerations:
 TECHNICAL SPECIFICATIONS
 ========================
 
+Current Version: 1.1.0 Enhanced Safety Edition
+
 Minimum Requirements:
 - Python 3.13+ (development)
 - Pygame 2.6.1+
@@ -252,9 +276,15 @@ Minimum Requirements:
 - 100MB RAM
 - DirectX-compatible graphics
 
+Build System:
+- PyInstaller 6.14.2
+- Enhanced antivirus compatibility
+- Comprehensive version metadata
+- Automated build process via build.bat
+
 File Sizes:
-- car.py: ~35KB (main source)
-- SpeedyHighway.exe: ~15-20MB (built executable)
+- car.py: ~35KB (main source, v1.1.0)
+- SpeedyHighway.exe: ~15-20MB (built executable, v1.1.0)
 - Assets: ~500KB total
 - Documentation: ~50KB total
 
@@ -263,6 +293,12 @@ Performance Metrics:
 - Memory usage: <100MB
 - CPU usage: <10% on modern systems
 - Frame rate: Consistent 60 FPS
+
+New in v1.1.0:
+- Enhanced safety confirmation system
+- Two-step reset process with Y/N prompts
+- ESC cancellation support
+- Improved user experience and data protection
 
 END OF DOCUMENTATION
 ===================
