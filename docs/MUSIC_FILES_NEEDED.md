@@ -5,12 +5,14 @@ Place the following music files in this directory (`assets/music/`):
 ## Required Music Files
 
 ### menu_music.mp3
+
 - **Purpose**: Background music for menu screens
 - **Loop**: Should be seamless loop for continuous playback
 - **Style**: Energetic, upbeat menu music
 - **Duration**: 1-3 minutes (will loop automatically)
 
 ### game_music.mp3
+
 - **Purpose**: Background music during gameplay
 - **Loop**: Should be seamless loop for continuous playback
 - **Style**: Fast-paced, driving music to match racing gameplay
