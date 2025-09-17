@@ -268,6 +268,8 @@ class CarRacing:
         self.previous_state = GameStates.MENU
         
         self.reset_confirmation_active = False
+        self.seed_input_active = False
+        self.seed_input_text = ""
         
         self.load_game_data()
         
@@ -630,6 +632,10 @@ class CarRacing:
     
     def handle_menu_events(self, event):
         if event.type == pygame.KEYDOWN:
+            if self.seed_input_active:
+                self.handle_seed_input_events(event)
+                return
+                
             if event.key == pygame.K_SPACE:
                 self.sound_manager.play_sound('menu_select')
                 self.current_state = GameStates.PLAYING
@@ -678,11 +684,44 @@ class CarRacing:
                     self.sound_manager.set_music_volume(0.7)
                 self.sound_manager.play_sound('menu_select')
             elif event.key == pygame.K_s:
-                self.prompt_custom_seed()
+                self.seed_input_active = True
+                self.seed_input_text = ""
+                self.sound_manager.play_sound('menu_select')
             elif event.key == pygame.K_ESCAPE:
                 self.sound_manager.cleanup()
                 pygame.quit()
                 sys.exit()
+    
+    def handle_seed_input_events(self, event):
+        if event.key == pygame.K_RETURN:
+            try:
+                if self.seed_input_text.strip():
+                    custom_seed = int(self.seed_input_text.strip())
+                    self.set_entropy_seed(custom_seed)
+                    print(f"Custom entropy seed set to: {custom_seed}")
+                else:
+                    self.generate_new_entropy_seed()
+                    print("Empty input. Generated new random seed.")
+            except ValueError:
+                print("Invalid seed input. Generated new random seed.")
+                self.generate_new_entropy_seed()
+            
+            self.seed_input_active = False
+            self.seed_input_text = ""
+            self.sound_manager.play_sound('menu_select')
+            
+        elif event.key == pygame.K_ESCAPE:
+            self.seed_input_active = False
+            self.seed_input_text = ""
+            self.sound_manager.play_sound('menu_select')
+            
+        elif event.key == pygame.K_BACKSPACE:
+            self.seed_input_text = self.seed_input_text[:-1]
+            
+        else:
+            if event.unicode.isdigit() or (event.unicode == '-' and len(self.seed_input_text) == 0):
+                if len(self.seed_input_text) < 15:
+                    self.seed_input_text += event.unicode
     
     def handle_car_selection_events(self, event):
         if event.type == pygame.KEYDOWN:
@@ -752,6 +791,12 @@ class CarRacing:
     def update_menu(self):
         self.gameDisplay.fill(self.black)
         
+        if self.seed_input_active:
+            self.display_seed_input()
+        else:
+            self.display_main_menu()
+    
+    def display_main_menu(self):
         font_title = pygame.font.SysFont("comicsansms", 48, True)
         title = font_title.render("SPEEDY HIGHWAY", True, self.white)
         self.gameDisplay.blit(title, (400 - title.get_width() // 2, 80))
@@ -795,6 +840,45 @@ class CarRacing:
                 challenge_text += " [COMPLETE]"
             text = font_small.render(challenge_text, True, self.yellow)
             self.gameDisplay.blit(text, (10, 550))
+    
+    def display_seed_input(self):
+        font_title = pygame.font.SysFont("comicsansms", 48, True)
+        font_text = pygame.font.SysFont("lucidaconsole", 24)
+        font_small = pygame.font.SysFont("lucidaconsole", 16)
+        
+        title = font_title.render("CUSTOM ENTROPY SEED", True, self.yellow)
+        self.gameDisplay.blit(title, (400 - title.get_width() // 2, 150))
+        
+        instruction = font_text.render("Enter a custom seed (integer):", True, self.white)
+        self.gameDisplay.blit(instruction, (400 - instruction.get_width() // 2, 250))
+        
+        input_box_rect = pygame.Rect(300, 300, 200, 40)
+        pygame.draw.rect(self.gameDisplay, self.white, input_box_rect, 2)
+
+        input_text = font_text.render(self.seed_input_text, True, self.white)
+        text_x = input_box_rect.x + 5
+        text_y = input_box_rect.y + (input_box_rect.height - input_text.get_height()) // 2
+        self.gameDisplay.blit(input_text, (text_x, text_y))
+        
+        cursor_x = text_x + input_text.get_width()
+        if pygame.time.get_ticks() % 1000 < 500:
+            pygame.draw.line(self.gameDisplay, self.white, 
+                           (cursor_x, text_y), 
+                           (cursor_x, text_y + input_text.get_height()), 2)
+        
+        instructions = [
+            "ENTER - Confirm seed",
+            "ESC - Cancel",
+            "BACKSPACE - Delete character",
+            "",
+            f"Current seed: {self._entropy_seed}"
+        ]
+        
+        for i, instruction in enumerate(instructions):
+            color = self.yellow if instruction else self.white
+            if instruction:
+                text = font_small.render(instruction, True, color)
+                self.gameDisplay.blit(text, (400 - text.get_width() // 2, 400 + i * 25))
     
     def update_game(self):
         if self.crashed:
@@ -1333,17 +1417,6 @@ class CarRacing:
         self.daily_challenge = self.generate_daily_challenge()
         
         print("Progress reset successfully!")
-    
-    def prompt_custom_seed(self):
-        """Prompt user for custom entropy seed (simplified version for demo)"""
-        try:
-            seed_input = input("Enter custom entropy seed (integer): ")
-            custom_seed = int(seed_input)
-            self.set_entropy_seed(custom_seed)
-            print(f"Custom entropy seed set to: {custom_seed}")
-        except (ValueError, EOFError):
-            print("Invalid seed input. Generating new random seed.")
-            self.generate_new_entropy_seed()
     
 if __name__ == '__main__':
     car_racing = CarRacing()

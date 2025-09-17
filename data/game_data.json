@@ -9,11 +9,11 @@
   "games_played": 0,
   "total_playtime": 0,
   "best_streak": 0,
-  "last_daily_challenge": "2025-09-16",
+  "last_daily_challenge": "2025-09-17",
   "daily_challenge": {
-    "type": "near_miss",
-    "target": 15,
-    "description": "Get 15 near misses",
+    "type": "score",
+    "target": 2000,
+    "description": "Score 2000 points",
     "completed": false
   },
   "highest_difficulty_reached": 0,
