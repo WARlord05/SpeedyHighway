@@ -9,11 +9,11 @@
   "games_played": 0,
   "total_playtime": 0,
   "best_streak": 0,
-  "last_daily_challenge": "2025-09-17",
+  "last_daily_challenge": "2025-09-18",
   "daily_challenge": {
-    "type": "score",
-    "target": 2000,
-    "description": "Score 2000 points",
+    "type": "survival",
+    "target": 3600,
+    "description": "Survive for 1 minute",
     "completed": false
   },
   "highest_difficulty_reached": 0,

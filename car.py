@@ -246,6 +246,15 @@ class Achievement:
 class CarRacing:
     def __init__(self):
         pygame.init()
+        
+        try:
+            icon_path = os.path.join("assets", "ico.png")
+            if os.path.exists(icon_path):
+                icon = pygame.image.load(icon_path)
+                pygame.display.set_icon(icon)
+        except Exception as e:
+            print(f"Could not load window icon during initialization: {e}")
+        
         self.display_width = 800
         self.display_height = 600
         self.black = (0, 0, 0)
@@ -587,6 +596,15 @@ class CarRacing:
     def racing_window(self):
         self.gameDisplay = pygame.display.set_mode((self.display_width, self.display_height))
         pygame.display.set_caption(f'Speedy Highway - Retro Racing v{__version__}')
+        
+        try:
+            icon_path = os.path.join("assets", "ico.png")
+            if os.path.exists(icon_path):
+                icon = pygame.image.load(icon_path)
+                pygame.display.set_icon(icon)
+        except Exception as e:
+            print(f"Could not load window icon: {e}")
+        
         self.main_game_loop()
     
     def main_game_loop(self):
