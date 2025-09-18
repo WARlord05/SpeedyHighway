@@ -215,20 +215,29 @@ Add `SpeedyHighway.exe` to your antivirus whitelist/exclusions:
 
 ```text
 SpeedyHighway/
-├── SpeedyHighway.exe          # Main executable v1.1.0 (ready to run)
-├── SpeedyHighway_v1.0.1_backup.exe  # Previous version backup
-├── car.py                     # Source code (v1.1.0)
-├── README.md                  # This file (updated for v1.1.0)
-├── RELEASE_NOTES_v1.1.0.md    # New release documentation
-├── assets/                    # Game assets (bundled in exe)
-├── data/                      # Game save data
+├── car.py                     # Main source code (v1.2.0)
+├── README.md                  # Project documentation
+├── .gitignore                 # Git ignore configuration
+├── assets/                    # Game assets (images, sounds, icons)
+│   ├── back.jpg              # Background image
+│   ├── car.png               # Default car sprite
+│   ├── car_blue.png          # Blue car variant
+│   ├── car_red.png           # Red car variant
+│   └── car_yellow.png        # Yellow car variant
+├── data/                      # Game save data (persistent)
+│   └── game_data.json        # Achievement and progress data
 ├── project/                   # Build system and development files
-│   ├── build.bat             # Build script
+│   ├── build.bat             # Build script for executable creation
 │   ├── PROJECT_STRUCTURE.txt # Technical structure details
-│   └── SpeedyHighway.spec    # PyInstaller specification
-└── docs/                      # Documentation
-    └── PROJECT_DOCUMENTATION.md # Comprehensive documentation (updated)
+│   ├── SpeedyHighway.spec    # PyInstaller specification
+│   ├── SpeedyHighway.spec.backup # Safety backup of spec file
+│   ├── version_info.py       # Version information for build
+│   └── version_info.txt      # Version metadata for executable
+└── docs/                      # Comprehensive documentation
+    └── PROJECT_DOCUMENTATION.md # Technical documentation
 ```
+
+**Note**: Executable files, build artifacts, temporary files, and release notes are excluded from git tracking as defined in `.gitignore`.
 
 ## 🔧 Robust Data Handling
 
