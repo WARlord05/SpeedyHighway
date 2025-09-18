@@ -221,20 +221,27 @@ SpeedyHighway/
 ├── assets/                    # Game assets (images, sounds, icons)
 │   ├── back.jpg              # Background image
 │   ├── car.png               # Default car sprite
+│   ├── car_black.png         # Black car variant
 │   ├── car_blue.png          # Blue car variant
 │   ├── car_red.png           # Red car variant
-│   └── car_yellow.png        # Yellow car variant
+│   ├── car_yellow.png        # Yellow car variant
+│   ├── ico.ico               # Game icon (Windows format)
+│   ├── ico.png               # Game icon (PNG format)
+│   ├── music/                # Background music files
+│   ├── sounds/               # Sound effects
+│   └── spc/                  # Special assets
 ├── data/                      # Game save data (persistent)
 │   └── game_data.json        # Achievement and progress data
 ├── project/                   # Build system and development files
 │   ├── build.bat             # Build script for executable creation
-│   ├── PROJECT_STRUCTURE.txt # Technical structure details
 │   ├── SpeedyHighway.spec    # PyInstaller specification
 │   ├── SpeedyHighway.spec.backup # Safety backup of spec file
 │   ├── version_info.py       # Version information for build
 │   └── version_info.txt      # Version metadata for executable
 └── docs/                      # Comprehensive documentation
-    └── PROJECT_DOCUMENTATION.md # Technical documentation
+    ├── PROJECT_DOCUMENTATION.md # Technical documentation
+    ├── PROJECT_STRUCTURE.md  # Project structure details
+    └── MUSIC_FILES_NEEDED.md # Music requirements documentation
 ```
 
 **Note**: Executable files, build artifacts, temporary files, and release notes are excluded from git tracking as defined in `.gitignore`.
