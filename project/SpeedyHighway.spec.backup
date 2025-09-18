@@ -1,0 +1,55 @@
+# -*- mode: python ; coding: utf-8 -*-
+# SpeedyHighway Build Specification
+# Enhanced for antivirus compatibility and metadata inclusion
+
+block_cipher = None
+
+a = Analysis(
+    ['..\\car.py'],
+    pathex=[],
+    binaries=[],
+    datas=[
+        ('..\\assets', 'assets'),
+        ('..\\data', 'data'),
+    ],
+    hiddenimports=[],
+    hookspath=[],
+    hooksconfig={},
+    runtime_hooks=[],
+    excludes=[],
+    win_no_prefer_redirects=False,
+    win_private_assemblies=False,
+    cipher=block_cipher,
+    noarchive=False,
+)
+
+pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
+
+exe = EXE(
+    pyz,
+    a.scripts,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
+    [],
+    name='SpeedyHighway',
+    debug=False,
+    bootloader_ignore_signals=False,
+    strip=False,
+    upx=False,  # Disabled UPX for better antivirus compatibility
+    upx_exclude=[],
+    runtime_tmpdir=None,
+    console=False,  # Windowed application
+    disable_windowed_traceback=False,
+    argv_emulation=False,
+    target_arch=None,
+    codesign_identity=None,
+    entitlements_file=None,
+    version='version_info.txt',  # Include version information for antivirus compatibility
+    icon='..\\assets\\ico.ico',  # Game icon (ICO format for Windows compatibility)
+    uac_admin=False,  # No admin privileges required
+    uac_uiaccess=False,  # No UI access required
+    # Additional antivirus compatibility settings
+    manifest=None,  # Use default manifest
+    contents_directory='.',  # Standard contents directory
+)

@@ -5,8 +5,8 @@
 #
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(1, 1, 0, 0),
-    prodvers=(1, 1, 0, 0),
+    filevers=(1, 2, 0, 0),
+    prodvers=(1, 2, 0, 0),
     mask=0x3f,
     flags=0x0,
     OS=0x4,
@@ -20,17 +20,17 @@ VSVersionInfo(
       StringTable(
         '040904B0',
         [StringStruct('CompanyName', 'WARlord05 Games'),
-        StringStruct('FileDescription', 'Speedy Highway Racing Game - Enhanced Edition v1.1'),
-        StringStruct('FileVersion', '1.1.0.0'),
+        StringStruct('FileDescription', 'Speedy Highway Racing Game v1.2.0 - WASD Controls & Branded UI Edition'),
+        StringStruct('FileVersion', '1.2.0.0'),
         StringStruct('InternalName', 'SpeedyHighway'),
         StringStruct('LegalCopyright', 'Copyright (c) 2025 WARlord05'),
         StringStruct('LegalTrademarks', 'WARlord05 Games'),
         StringStruct('OriginalFilename', 'SpeedyHighway.exe'),
-        StringStruct('ProductName', 'Speedy Highway'),
-        StringStruct('ProductVersion', '1.1.0'),
-        StringStruct('Comments', 'A fun racing game built with Python and Pygame'),
+        StringStruct('ProductName', 'Speedy Highway v1.2.0'),
+        StringStruct('ProductVersion', '1.2.0'),
+        StringStruct('Comments', 'Enhanced racing game with WASD controls and branded UI design'),
         StringStruct('PrivateBuild', 'Open Source Game Project'),
-        StringStruct('SpecialBuild', 'Enhanced Edition with improved safety features')])
+        StringStruct('SpecialBuild', 'v1.2.0 Final Release - WASD Controls & Branded UI Edition')])
       ]),
     VarFileInfo([VarStruct('Translation', [1033, 1200])])
   ]

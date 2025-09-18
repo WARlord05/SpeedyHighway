@@ -1,8 +1,8 @@
 @echo off
-echo Building SpeedyHighway v1.0.1 executable with enhanced antivirus compatibility...
-echo Project: Speedy Highway - Enhanced Edition
+echo Building SpeedyHighway v1.2.0 executable with enhanced antivirus compatibility...
+echo Project: Speedy Highway v1.2.0 - Final Release
 echo Author: Tanay Vidhate (WARlord05)
-echo Status: Production Ready with Recent Bug Fixes and Improvements
+echo Status: Production Ready - WASD Controls and Branded UI Release
 echo.
 
 :: Check if PyInstaller is installed

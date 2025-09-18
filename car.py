@@ -7,7 +7,7 @@ import hashlib
 import time
 from datetime import datetime, timedelta
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 __author__ = "Tanay Vidhate (WARlord05)"
 __description__ = "Speedy Highway Racing Game - Enhanced Edition"
 
@@ -277,6 +277,8 @@ class CarRacing:
         self.previous_state = GameStates.MENU
         
         self.reset_confirmation_active = False
+        self.quit_confirmation_active = False
+        self.fullscreen_mode = False
         self.seed_input_active = False
         self.seed_input_text = ""
         
@@ -364,6 +366,26 @@ class CarRacing:
 
         self.bgImg = pygame.image.load(get_resource_path(os.path.join("assets", "back.jpg")))
         self.bgImg = pygame.transform.scale(self.bgImg, (self.display_width, self.display_height))
+        
+        
+        try:
+            self.menu_bg_icon = pygame.image.load(get_resource_path(os.path.join("assets", "ico.png")))
+            icon_rect = self.menu_bg_icon.get_rect()
+            scale_factor = max(self.display_width / icon_rect.width, self.display_height / icon_rect.height)
+            new_width = int(icon_rect.width * scale_factor)
+            new_height = int(icon_rect.height * scale_factor)
+            self.menu_bg_icon = pygame.transform.scale(self.menu_bg_icon, (new_width, new_height))
+            
+            self.menu_bg_icon_faded = self.menu_bg_icon.copy()
+            dark_overlay = pygame.Surface((new_width, new_height))
+            dark_overlay.set_alpha(180)
+            dark_overlay.fill((0, 0, 0))
+            self.menu_bg_icon_faded.blit(dark_overlay, (0, 0))
+        except Exception as e:
+            print(f"Could not load menu background icon: {e}")
+            self.menu_bg_icon = None
+            self.menu_bg_icon_faded = None
+        
         self.bg_x1 = 0
         self.bg_x2 = 0
         self.bg_y1 = 0
@@ -594,7 +616,16 @@ class CarRacing:
                 self.carImg = self.carImg_spc_frames[self.special_car_frame]
 
     def racing_window(self):
-        self.gameDisplay = pygame.display.set_mode((self.display_width, self.display_height))
+        self.setup_display()
+        self.main_game_loop()
+    
+    def setup_display(self):
+        """Setup display mode based on fullscreen setting"""
+        if self.fullscreen_mode:
+            self.gameDisplay = pygame.display.set_mode((self.display_width, self.display_height), pygame.FULLSCREEN)
+        else:
+            self.gameDisplay = pygame.display.set_mode((self.display_width, self.display_height))
+        
         pygame.display.set_caption(f'Speedy Highway - Retro Racing v{__version__}')
         
         try:
@@ -604,19 +635,35 @@ class CarRacing:
                 pygame.display.set_icon(icon)
         except Exception as e:
             print(f"Could not load window icon: {e}")
-        
-        self.main_game_loop()
+    
+    def toggle_fullscreen(self):
+        """Toggle between fullscreen and windowed mode"""
+        self.fullscreen_mode = not self.fullscreen_mode
+        self.setup_display()
+        self.sound_manager.play_sound('menu_select')
     
     def main_game_loop(self):
         running = True
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    running = False
+                    if not self.quit_confirmation_active:
+                        self.quit_confirmation_active = True
+                        self.sound_manager.play_sound('menu_select')
                 elif event.type == pygame.USEREVENT + 1:
                     self.sound_manager.start_engine_loop()
                 else:
-                    self.handle_state_events(event)
+                    if self.quit_confirmation_active:
+                        if event.type == pygame.KEYDOWN:
+                            if event.key == pygame.K_y:
+                                self.sound_manager.cleanup()
+                                pygame.quit()
+                                sys.exit()
+                            elif event.key == pygame.K_n or event.key == pygame.K_ESCAPE:
+                                self.quit_confirmation_active = False
+                                self.sound_manager.play_sound('menu_back')
+                    else:
+                        self.handle_state_events(event)
             
             if self.current_state == GameStates.MENU:
                 self.update_menu()
@@ -705,10 +752,14 @@ class CarRacing:
                 self.seed_input_active = True
                 self.seed_input_text = ""
                 self.sound_manager.play_sound('menu_select')
+            elif event.key == pygame.K_f:
+                self.toggle_fullscreen()
+            elif event.key == pygame.K_RETURN and (pygame.key.get_pressed()[pygame.K_LALT] or pygame.key.get_pressed()[pygame.K_RALT]):
+                self.toggle_fullscreen()
             elif event.key == pygame.K_ESCAPE:
-                self.sound_manager.cleanup()
-                pygame.quit()
-                sys.exit()
+                if not self.quit_confirmation_active:
+                    self.quit_confirmation_active = True
+                    self.sound_manager.play_sound('menu_select')
     
     def handle_seed_input_events(self, event):
         if event.key == pygame.K_RETURN:
@@ -743,10 +794,10 @@ class CarRacing:
     
     def handle_car_selection_events(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                 self.sound_manager.play_sound('menu_select')
                 self.previous_car()
-            elif event.key == pygame.K_RIGHT:
+            elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                 self.sound_manager.play_sound('menu_select')
                 self.next_car()
             elif event.key == pygame.K_SPACE:
@@ -809,12 +860,33 @@ class CarRacing:
     def update_menu(self):
         self.gameDisplay.fill(self.black)
         
-        if self.seed_input_active:
+        if self.quit_confirmation_active:
+            self.display_quit_confirmation()
+        elif self.seed_input_active:
             self.display_seed_input()
         else:
             self.display_main_menu()
     
     def display_main_menu(self):
+        if hasattr(self, 'menu_bg_icon_faded') and self.menu_bg_icon_faded:
+            icon_rect = self.menu_bg_icon_faded.get_rect()
+            x = (self.display_width - icon_rect.width) // 2
+            y = (self.display_height - icon_rect.height) // 2
+            self.gameDisplay.blit(self.menu_bg_icon_faded, (x, y))
+        
+        panel_width = 650
+        panel_height = 450
+        panel_x = (self.display_width - panel_width) // 2
+        panel_y = 60
+        
+        panel_surface = pygame.Surface((panel_width, panel_height))
+        panel_surface.set_alpha(160)
+        panel_surface.fill((0, 0, 0))
+        
+        pygame.draw.rect(panel_surface, (64, 64, 64), (0, 0, panel_width, panel_height), 3)
+        
+        self.gameDisplay.blit(panel_surface, (panel_x, panel_y))
+        
         font_title = pygame.font.SysFont("comicsansms", 48, True)
         title = font_title.render("SPEEDY HIGHWAY", True, self.white)
         self.gameDisplay.blit(title, (400 - title.get_width() // 2, 80))
@@ -824,42 +896,78 @@ class CarRacing:
         self.gameDisplay.blit(version_text, (400 - version_text.get_width() // 2, 145))
         
         font_menu = pygame.font.SysFont("lucidaconsole", 24)
+        fullscreen_status = "ON" if self.fullscreen_mode else "OFF"
         options = [
             "SPACE - Start Game",
             "H - High Scores",
             "A - Achievements", 
             "C - Car Selection",
             f"D - Difficulty: {self.difficulty_modes[self.current_difficulty]}",
+            f"F - Fullscreen: {fullscreen_status}",
             "ESC - Quit"
         ]
         
         for i, option in enumerate(options):
             text = font_menu.render(option, True, self.white)
-            self.gameDisplay.blit(text, (400 - text.get_width() // 2, 200 + i * 40))
+            self.gameDisplay.blit(text, (400 - text.get_width() // 2, 200 + i * 35))
         
         font_small = pygame.font.SysFont("lucidaconsole", 16)
         volume_percent = int(self.sound_manager.master_volume * 100)
         volume_text = f"Sound Volume: {volume_percent}% (+/- to adjust, M to mute)"
         volume_render = font_small.render(volume_text, True, self.yellow)
-        self.gameDisplay.blit(volume_render, (400 - volume_render.get_width() // 2, 460))
+        self.gameDisplay.blit(volume_render, (400 - volume_render.get_width() // 2, 435))
         
         music_volume_percent = int(self.sound_manager.music_volume * 100)
         music_text = f"Music Volume: {music_volume_percent}% ([/] to adjust, N to mute)"
         music_render = font_small.render(music_text, True, self.yellow)
-        self.gameDisplay.blit(music_render, (400 - music_render.get_width() // 2, 480))
+        self.gameDisplay.blit(music_render, (400 - music_render.get_width() // 2, 455))
+        
+        fullscreen_text = "ALT+ENTER - Toggle fullscreen anytime"
+        fullscreen_render = font_small.render(fullscreen_text, True, self.green)
+        self.gameDisplay.blit(fullscreen_render, (400 - fullscreen_render.get_width() // 2, 475))
         
         seed_text = f"Entropy Seed: {self._entropy_seed} (S to set custom seed)"
         seed_render = font_small.render(seed_text, True, self.blue)
+        seed_bg = pygame.Surface((seed_render.get_width() + 10, seed_render.get_height() + 4))
+        seed_bg.set_alpha(180)
+        seed_bg.fill((0, 0, 0))
+        self.gameDisplay.blit(seed_bg, (5, 8))
         self.gameDisplay.blit(seed_render, (10, 10))
+        
         
         if self.daily_challenge:
             challenge_text = f"Daily Challenge: {self.daily_challenge.get('description', 'N/A')}"
             if self.daily_challenge.get('completed', False):
                 challenge_text += " [COMPLETE]"
             text = font_small.render(challenge_text, True, self.yellow)
+            challenge_bg = pygame.Surface((text.get_width() + 10, text.get_height() + 4))
+            challenge_bg.set_alpha(180)
+            challenge_bg.fill((0, 0, 0))
+            self.gameDisplay.blit(challenge_bg, (5, 548))
             self.gameDisplay.blit(text, (10, 550))
     
     def display_seed_input(self):
+        if hasattr(self, 'menu_bg_icon_faded') and self.menu_bg_icon_faded:
+            icon_rect = self.menu_bg_icon_faded.get_rect()
+            x = (self.display_width - icon_rect.width) // 2
+            y = (self.display_height - icon_rect.height) // 2
+            self.gameDisplay.blit(self.menu_bg_icon_faded, (x, y))
+        
+        
+        panel_width = 550
+        panel_height = 400
+        panel_x = (self.display_width - panel_width) // 2
+        panel_y = (self.display_height - panel_height) // 2
+        
+        panel_surface = pygame.Surface((panel_width, panel_height))
+        panel_surface.set_alpha(180)
+        panel_surface.fill((0, 0, 0))
+        
+        
+        pygame.draw.rect(panel_surface, (64, 64, 64), (0, 0, panel_width, panel_height), 3)
+        
+        self.gameDisplay.blit(panel_surface, (panel_x, panel_y))
+        
         font_title = pygame.font.SysFont("comicsansms", 48, True)
         font_text = pygame.font.SysFont("lucidaconsole", 24)
         font_small = pygame.font.SysFont("lucidaconsole", 16)
@@ -897,6 +1005,51 @@ class CarRacing:
             if instruction:
                 text = font_small.render(instruction, True, color)
                 self.gameDisplay.blit(text, (400 - text.get_width() // 2, 400 + i * 25))
+    
+    def display_quit_confirmation(self):
+        if hasattr(self, 'menu_bg_icon_faded') and self.menu_bg_icon_faded:
+            icon_rect = self.menu_bg_icon_faded.get_rect()
+            x = (self.display_width - icon_rect.width) // 2
+            y = (self.display_height - icon_rect.height) // 2
+            self.gameDisplay.blit(self.menu_bg_icon_faded, (x, y))
+        
+        
+        panel_width = 500
+        panel_height = 300
+        panel_x = (self.display_width - panel_width) // 2
+        panel_y = (self.display_height - panel_height) // 2
+        
+        panel_surface = pygame.Surface((panel_width, panel_height))
+        panel_surface.set_alpha(200)
+        panel_surface.fill((20, 20, 20))
+        
+        pygame.draw.rect(panel_surface, (128, 128, 128), (0, 0, panel_width, panel_height), 3)
+        
+        self.gameDisplay.blit(panel_surface, (panel_x, panel_y))
+        
+        font_title = pygame.font.SysFont("comicsansms", 48, True)
+        font_text = pygame.font.SysFont("lucidaconsole", 24)
+        font_small = pygame.font.SysFont("lucidaconsole", 18)
+        
+        title = font_title.render("QUIT GAME?", True, self.red)
+        self.gameDisplay.blit(title, (400 - title.get_width() // 2, 200))
+        
+        message = font_text.render("Are you sure you want to quit?", True, self.white)
+        self.gameDisplay.blit(message, (400 - message.get_width() // 2, 280))
+        
+        warning = font_small.render("Any unsaved progress will be lost.", True, self.yellow)
+        self.gameDisplay.blit(warning, (400 - warning.get_width() // 2, 320))
+        
+        instructions = [
+            "Y - Yes, quit the game",
+            "N - No, go back to menu",
+            "ESC - Cancel"
+        ]
+        
+        for i, instruction in enumerate(instructions):
+            color = self.green if instruction.startswith("N") else self.yellow
+            text = font_small.render(instruction, True, color)
+            self.gameDisplay.blit(text, (400 - text.get_width() // 2, 350 + i * 25))
     
     def update_game(self):
         if self.crashed:
@@ -1025,6 +1178,10 @@ class CarRacing:
                 else:
                     self.paused = True
                     self.show_countdown = False
+            elif event.key == pygame.K_f:
+                self.toggle_fullscreen()
+            elif event.key == pygame.K_RETURN and (pygame.key.get_pressed()[pygame.K_LALT] or pygame.key.get_pressed()[pygame.K_RALT]):
+                self.toggle_fullscreen()
             elif not self.paused and not self.show_countdown:
                 pass
     
@@ -1060,7 +1217,7 @@ class CarRacing:
         keys = pygame.key.get_pressed()
         current_frame = self.count
         
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             if not self.key_pressed_last_frame["left"]:
                 self.move_left()
                 self.last_key_press_time["left"] = current_frame
@@ -1071,7 +1228,7 @@ class CarRacing:
         else:
             self.key_pressed_last_frame["left"] = False
         
-        if keys[pygame.K_RIGHT]:
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             if not self.key_pressed_last_frame["right"]:
                 self.move_right()
                 self.last_key_press_time["right"] = current_frame
@@ -1198,12 +1355,31 @@ class CarRacing:
     def display_high_scores(self):
         self.gameDisplay.fill(self.black)
         
+        if hasattr(self, 'menu_bg_icon_faded') and self.menu_bg_icon_faded:
+            icon_rect = self.menu_bg_icon_faded.get_rect()
+            x = (self.display_width - icon_rect.width) // 2
+            y = (self.display_height - icon_rect.height) // 2
+            self.gameDisplay.blit(self.menu_bg_icon_faded, (x, y))
+        
+        panel_width = 700
+        panel_height = 450
+        panel_x = (self.display_width - panel_width) // 2
+        panel_y = (self.display_height - panel_height) // 2
+        
+        panel_surface = pygame.Surface((panel_width, panel_height))
+        panel_surface.set_alpha(160)
+        panel_surface.fill((0, 0, 0))
+        
+        pygame.draw.rect(panel_surface, (64, 64, 64), (0, 0, panel_width, panel_height), 3)
+        
+        self.gameDisplay.blit(panel_surface, (panel_x, panel_y))
+        
         font_title = pygame.font.SysFont("comicsansms", 48, True)
         font_text = pygame.font.SysFont("lucidaconsole", 18)
         font_highlight = pygame.font.SysFont("comicsansms", 32, True)
         
         title = font_title.render("HIGH SCORES", True, self.yellow)
-        self.gameDisplay.blit(title, (400 - title.get_width() // 2, 30))
+        self.gameDisplay.blit(title, (400 - title.get_width() // 2, panel_y + 30))
         
         highest_difficulty = self.game_data.get("highest_difficulty_reached", 0)
         best_scores = self.game_data.get("best_scores_per_difficulty", [0, 0, 0, 0])
@@ -1212,18 +1388,18 @@ class CarRacing:
         if best_score_in_highest_diff > 0:
             highlight_text = f"Your Best in {self.difficulty_modes[highest_difficulty]}: {best_score_in_highest_diff}"
             highlight_render = font_highlight.render(highlight_text, True, self.green)
-            self.gameDisplay.blit(highlight_render, (400 - highlight_render.get_width() // 2, 90))
+            self.gameDisplay.blit(highlight_render, (400 - highlight_render.get_width() // 2, panel_y + 80))
         
         high_scores = self.game_data.get("high_scores", [])
-        start_y = 140 if best_score_in_highest_diff > 0 else 120
+        start_y = panel_y + 130 if best_score_in_highest_diff > 0 else panel_y + 100
         
         for i, score_data in enumerate(high_scores[:10]):
             score_text = f"{i+1}. {score_data['score']} - {score_data['difficulty']} - {score_data['date']}"
             text = font_text.render(score_text, True, self.white)
-            self.gameDisplay.blit(text, (50, start_y + i * 30))
+            self.gameDisplay.blit(text, (panel_x + 20, start_y + i * 30))
         
         instruction = font_text.render("Press ESC to return to menu", True, self.yellow)
-        self.gameDisplay.blit(instruction, (400 - instruction.get_width() // 2, 500))
+        self.gameDisplay.blit(instruction, (400 - instruction.get_width() // 2, panel_y + 410))
         
         keys = pygame.key.get_pressed()
         if keys[pygame.K_ESCAPE]:
@@ -1233,16 +1409,35 @@ class CarRacing:
     def display_achievements(self):
         self.gameDisplay.fill(self.black)
         
+        if hasattr(self, 'menu_bg_icon_faded') and self.menu_bg_icon_faded:
+            icon_rect = self.menu_bg_icon_faded.get_rect()
+            x = (self.display_width - icon_rect.width) // 2
+            y = (self.display_height - icon_rect.height) // 2
+            self.gameDisplay.blit(self.menu_bg_icon_faded, (x, y))
+        
         font_title = pygame.font.SysFont("comicsansms", 48, True)
         font_text = pygame.font.SysFont("lucidaconsole", 16)
         font_small = pygame.font.SysFont("lucidaconsole", 14)
         
         if self.reset_confirmation_active:
+            panel_width = 600
+            panel_height = 400
+            panel_x = (self.display_width - panel_width) // 2
+            panel_y = (self.display_height - panel_height) // 2
+            
+            panel_surface = pygame.Surface((panel_width, panel_height))
+            panel_surface.set_alpha(200)
+            panel_surface.fill((20, 20, 20))
+            
+            pygame.draw.rect(panel_surface, (128, 128, 128), (0, 0, panel_width, panel_height), 3)
+            
+            self.gameDisplay.blit(panel_surface, (panel_x, panel_y))
+            
             title = font_title.render("RESET PROGRESS", True, self.red)
-            self.gameDisplay.blit(title, (400 - title.get_width() // 2, 50))
+            self.gameDisplay.blit(title, (400 - title.get_width() // 2, panel_y + 30))
             
             warning_text = font_title.render("WARNING!", True, self.red)
-            self.gameDisplay.blit(warning_text, (400 - warning_text.get_width() // 2, 150))
+            self.gameDisplay.blit(warning_text, (400 - warning_text.get_width() // 2, panel_y + 90))
             
             confirm_lines = [
                 "This will permanently delete ALL your progress:",
@@ -1257,24 +1452,37 @@ class CarRacing:
             for i, line in enumerate(confirm_lines):
                 color = self.white if line else self.white
                 text = font_text.render(line, True, color)
-                self.gameDisplay.blit(text, (400 - text.get_width() // 2, 220 + i * 25))
+                self.gameDisplay.blit(text, (400 - text.get_width() // 2, panel_y + 140 + i * 25))
             
             yes_text = font_title.render("Y - YES, DELETE EVERYTHING", True, self.red)
-            self.gameDisplay.blit(yes_text, (400 - yes_text.get_width() // 2, 420))
+            self.gameDisplay.blit(yes_text, (400 - yes_text.get_width() // 2, panel_y + 310))
             
             no_text = font_title.render("N - NO, KEEP MY DATA", True, self.green)
-            self.gameDisplay.blit(no_text, (400 - no_text.get_width() // 2, 470))
+            self.gameDisplay.blit(no_text, (400 - no_text.get_width() // 2, panel_y + 350))
             
         else:
+            panel_width = 700
+            panel_height = 450
+            panel_x = (self.display_width - panel_width) // 2
+            panel_y = (self.display_height - panel_height) // 2
+            
+            panel_surface = pygame.Surface((panel_width, panel_height))
+            panel_surface.set_alpha(160)
+            panel_surface.fill((0, 0, 0))
+            
+            pygame.draw.rect(panel_surface, (64, 64, 64), (0, 0, panel_width, panel_height), 3)
+            
+            self.gameDisplay.blit(panel_surface, (panel_x, panel_y))
+            
             title = font_title.render("ACHIEVEMENTS", True, self.green)
-            self.gameDisplay.blit(title, (400 - title.get_width() // 2, 50))
+            self.gameDisplay.blit(title, (400 - title.get_width() // 2, panel_y + 30))
             
             for i, achievement in enumerate(self.achievements):
                 color = self.green if achievement.unlocked else self.red
                 status = "[UNLOCKED]" if achievement.unlocked else "[LOCKED]"
                 text = f"{status} {achievement.name}: {achievement.description}"
                 rendered_text = font_text.render(text, True, color)
-                self.gameDisplay.blit(rendered_text, (50, 120 + i * 30))
+                self.gameDisplay.blit(rendered_text, (panel_x + 20, panel_y + 100 + i * 30))
             
             instructions = [
                 "ESC - Back to Menu",
@@ -1284,18 +1492,37 @@ class CarRacing:
             for i, instruction in enumerate(instructions):
                 color = self.yellow if i == 0 else self.red
                 text = font_small.render(instruction, True, color)
-                self.gameDisplay.blit(text, (50, 450 + i * 20))
+                self.gameDisplay.blit(text, (panel_x + 20, panel_y + 400 + i * 20))
     
     def display_car_selection(self):
         self.gameDisplay.fill(self.black)
+        
+        if hasattr(self, 'menu_bg_icon_faded') and self.menu_bg_icon_faded:
+            icon_rect = self.menu_bg_icon_faded.get_rect()
+            x = (self.display_width - icon_rect.width) // 2
+            y = (self.display_height - icon_rect.height) // 2
+            self.gameDisplay.blit(self.menu_bg_icon_faded, (x, y))
+        
+        panel_width = 600
+        panel_height = 450
+        panel_x = (self.display_width - panel_width) // 2
+        panel_y = (self.display_height - panel_height) // 2
+        
+        panel_surface = pygame.Surface((panel_width, panel_height))
+        panel_surface.set_alpha(160)
+        panel_surface.fill((0, 0, 0))
+        
+        pygame.draw.rect(panel_surface, (64, 64, 64), (0, 0, panel_width, panel_height), 3)
+        
+        self.gameDisplay.blit(panel_surface, (panel_x, panel_y))
         
         font_title = pygame.font.SysFont("comicsansms", 48, True)
         font_text = pygame.font.SysFont("lucidaconsole", 20)
         
         title = font_title.render("CAR SELECTION", True, self.blue)
-        self.gameDisplay.blit(title, (400 - title.get_width() // 2, 50))
+        self.gameDisplay.blit(title, (400 - title.get_width() // 2, panel_y + 30))
         
-        preview_y = 120
+        preview_y = panel_y + 80
         self.gameDisplay.blit(self.carImg, (400 - self.carImg.get_width() // 2, preview_y))
         
         unlocked_cars = self.game_data["unlocked_cars"]
@@ -1308,17 +1535,17 @@ class CarRacing:
                 car_text = f"> {car_text} <"
             
             text = font_text.render(car_text, True, color)
-            self.gameDisplay.blit(text, (400 - text.get_width() // 2, 250 + i * 40))
+            self.gameDisplay.blit(text, (400 - text.get_width() // 2, panel_y + 200 + i * 40))
         
         instructions = [
-            "LEFT/RIGHT - Navigate",
+            "A/D or LEFT/RIGHT - Navigate",
             "SPACE - Select Car",
             "ESC - Back to Menu"
         ]
         
         for i, instruction in enumerate(instructions):
             text = font_text.render(instruction, True, self.white)
-            self.gameDisplay.blit(text, (400 - text.get_width() // 2, 450 + i * 30))
+            self.gameDisplay.blit(text, (400 - text.get_width() // 2, panel_y + 360 + i * 25))
 
     def display_message(self, msg):
         """Display a message to the user (currently just triggers game over)"""

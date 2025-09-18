@@ -45,7 +45,7 @@ SpeedyHighway is a retro-style highway racing game built with Python and Pygame.
 
 ### Basic Controls
 
-- **LEFT/RIGHT Arrow Keys**: Move car between lanes
+- **LEFT/RIGHT Arrow Keys OR A/D Keys**: Move car between lanes
 - **ESC**: Pause/Resume game or return to previous menu
 - **SPACE**: Start game, select options, or return to menu
 - **Mouse Click**: Resume from pause
@@ -363,7 +363,7 @@ Your progress is automatically saved:
 
 #### Core Game Updates
 
-- Added version information (now updated to `__version__ = "1.1.0"`)
+- Added version information (now updated to `__version__ = "1.2.0"`)
 - Updated window title to include version
 - Enhanced menu with version display
 - Fixed UI positioning (title/version overlap resolved)

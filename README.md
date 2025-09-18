@@ -1,29 +1,30 @@
-# 🏎️ Speedy Highway - Racing Game v1.1.0
+# 🏎️ Speedy Highway - Racing Game v1.2.0
 
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)](https://github.com/WARlord05/SpeedyHighway)
-[![Version](https://img.shields.io/badge/Version-1.1.0-blue)](https://github.com/WARlord05/SpeedyHighway/releases)
+[![Version](https://img.shields.io/badge/Version-1.2.0-blue)](https://github.com/WARlord05/SpeedyHighway/releases)
 [![Platform](https://img.shields.io/badge/Platform-Windows%2064--bit-lightgrey)](https://github.com/WARlord05/SpeedyHighway)
 [![License](https://img.shields.io/badge/License-MIT-green)](https://github.com/WARlord05/SpeedyHighway/blob/main/LICENSE)
 
 ## 🎮 Overview
 
-A thrilling 2D highway racing game built with Python and Pygame featuring enhanced mechanics, multiple difficulty levels, achievement system, car unlocking, and persistent game data storage with robust error handling. **Version 1.1.0** introduces comprehensive safety features to prevent accidental data loss.
+A thrilling 2D highway racing game built with Python and Pygame featuring enhanced mechanics, multiple difficulty levels, achievement system, car unlocking, and persistent game data storage with robust error handling. **Version 1.2.0** introduces WASD controls for enhanced accessibility and modern gaming standards.
 
 ### ✅ What You Get
 
-- **SpeedyHighway.exe** - Fully portable game executable (v1.1.0)
-- Enhanced safety features with confirmation dialogs
+- **SpeedyHighway.exe** - Fully portable game executable (v1.2.0)
+- Enhanced WASD + Arrow key dual control system
+- Professional icon integration and safety features
 - All assets and data files bundled inside the executable
 - No Python installation required on target computers
 - Works on any Windows system (64-bit)
 - Enhanced antivirus compatibility features
 
-### 🛡️ New in v1.1.0 - Enhanced Safety Features
+### 🎮 New in v1.2.0 - Enhanced Controls
 
-- **Two-Step Reset Confirmation**: Prevents accidental data loss with Y/N confirmation
-- **Interactive Warning Dialogs**: Clear visual feedback before destructive operations
-- **Multiple Safeguards**: ESC and N key cancellation options
-- **Better User Experience**: Comprehensive information about consequences before actions
+- **WASD Support**: Use A/D keys for left/right movement alongside arrow keys
+- **Dual Control System**: Choose between arrow keys or WASD based on preference
+- **Consistent Navigation**: WASD controls work in both gameplay and menus
+- **Gaming Standard**: Follows modern gaming conventions for better accessibility
 
 ## 🚀 Quick Start
 
@@ -41,11 +42,12 @@ A thrilling 2D highway racing game built with Python and Pygame featuring enhanc
 
 ### 🎯 Game Controls
 
-- **LEFT/RIGHT arrows**: Move car between lanes
+- **LEFT/RIGHT arrows OR A/D keys**: Move car between lanes
+- **F key OR Alt+Enter**: Toggle fullscreen mode
 - **ESC**: Pause/Resume game or cancel confirmation dialogs
 - **Mouse click**: Resume from pause
 
-### 🛡️ Safety Features (New in v1.1.0)
+### 🛡️ Safety Features
 
 - **R key** (in achievements menu): Initiate reset progress with confirmation
 - **Y key** (in confirmation dialog): Confirm reset after seeing warnings
