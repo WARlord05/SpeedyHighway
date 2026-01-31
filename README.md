@@ -242,7 +242,107 @@ SpeedyHighway/
     ├── PROJECT_DOCUMENTATION.md # Technical documentation
     ├── PROJECT_STRUCTURE.md  # Project structure details
     └── MUSIC_FILES_NEEDED.md # Music requirements documentation
+````
+## 🧑‍💻 Run From Source (For Developers / Contributors)
+
+If you want to run **Speedy Highway** directly from the Python source code (instead of the `.exe`), follow the steps below.
+
+### 📋 Prerequisites
+- Python **3.8 or higher**
+- `pip` (comes with Python)
+- Pygame
+
+Check Python installation:
+```bash
+python --version
+````
+
+or on some systems:
+
+```bash
+python3 --version
 ```
+
+---
+
+### 📦 Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/WARlord05/SpeedyHighway.git
+cd SpeedyHighway
+```
+
+---
+
+### 📦 Step 2: Install Dependencies
+
+Install Pygame using pip:
+
+```bash
+pip install pygame
+```
+
+or (Linux/macOS):
+
+```bash
+pip3 install pygame
+```
+
+---
+
+### ▶ Step 3: Run the Game
+
+Run the main game file:
+
+```bash
+python car.py
+```
+
+or:
+
+```bash
+python3 car.py
+```
+
+The game window should open immediately.
+
+---
+
+### 🛠 Common Issues & Fixes
+
+* **`pip` not recognized** → Ensure Python is added to PATH
+* **`pygame not found`** → Re-run `pip install pygame`
+* **Linux users** may need:
+
+  ```bash
+  sudo apt install python3-pygame
+  ```
+
+---
+
+### ℹ Notes
+
+* This method is intended for **developers and contributors**
+* Game data will be stored in the `data/` directory
+* Running from source avoids antivirus false-positive warnings seen with `.exe` files
+
+---
+
+`````
+
+---
+
+## 🏁 Final Advice
+
+This is a **high-quality documentation PR**:
+
+* Maintainers love these
+* Very high merge chance
+* Zero risk
+
+If you want, paste your **updated README diff** here and I’ll do a final polish before you open the PR.
+
+
 
 **Note**: Executable files, build artifacts, temporary files, and release notes are excluded from git tracking as defined in `.gitignore`.
 
