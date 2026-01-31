@@ -1113,11 +1113,16 @@ class CarRacing:
                     self.enemy_car_speed += 1
                     self.bg_speed += 1
 
-            if self.car_x_coordinate not in [215, 295, 415, 495]:
+
+            ROAD_MIN_X = 200
+            ROAD_MAX_X = 520
+            
+            if self.car_x_coordinate < ROAD_MIN_X or self.car_x_coordinate > ROAD_MAX_X:
                 self.sound_manager.play_sound('off_road')
                 self.sound_manager.stop_engine_sound()
                 self.engine_started = False
                 self.crashed = True
+
 
             if (self.car_y_coordinate + 20 < self.enemy_car_starty + self.enemy_car_height and 
                 self.car_y_coordinate + 50 > self.enemy_car_starty):
