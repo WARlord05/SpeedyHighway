@@ -27,8 +27,64 @@ A thrilling 2D highway racing game built with Python and Pygame featuring enhanc
 - **Gaming Standard**: Follows modern gaming conventions for better accessibility
 
 ## 🚀 Quick Start
+### 🚀 Installation & Setup
 
-### How to Run the Game
+### Prerequisites
+- Python 3.7 or higher
+- pip (Python package manager)
+
+### Step-by-Step Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/WARlord05/SpeedyHighway.git
+   cd SpeedyHighway
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pip install pygame
+   ```
+   
+   Or use a requirements file:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Run the game**
+   ```bash
+   python main.py
+   ```
+   
+   Or if using Python 3 specifically:
+   ```bash
+   python3 main.py
+   ```
+
+### For Beginners
+
+If you're new to Python:
+
+1. **Install Python**
+   - Windows: Download from [python.org](https://www.python.org/downloads/)
+   - Mac: `brew install python3`
+   - Linux: `sudo apt-get install python3 python3-pip`
+
+2. **Verify installation**
+   ```bash
+   python --version
+   pip --version
+   ```
+
+3. **Follow the installation steps above**
+
+### Troubleshooting
+
+- **"pygame not found"**: Run `pip install pygame`
+- **"Permission denied"**: Try `pip install --user pygame`
+- **Python not recognized**: Ensure Python is added to your system PATH
+  
+### 🚗How to Run the Game
 
 1. Navigate to the SpeedyHighway folder
 2. Double-click `SpeedyHighway.exe`
