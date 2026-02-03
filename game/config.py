@@ -1,5 +1,5 @@
 """
-Game configuration and constants
+Game configuration
 SpeedyHighway v1.2.0
 """
 
@@ -7,11 +7,10 @@ __version__ = "1.2.0"
 __author__ = "Tanay Vidhate (WARlord05)"
 __description__ = "Speedy Highway Racing Game - Enhanced Edition"
 
-# Display settings
+# Display And Color Settings
 DISPLAY_WIDTH = 800
 DISPLAY_HEIGHT = 600
 
-# Colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
@@ -29,16 +28,14 @@ LANE_POSITIONS = [215, 295, 415, 495]
 ROAD_MIN_X = 200
 ROAD_MAX_X = 520
 
-# Cars configuration
+# Cars and player and enemy car configuration and Settings
 AVAILABLE_CARS = ["car.png", "car_blue.png", "car_red.png", "special"]
 CAR_NAMES = ["Default", "Lamborghini", "Ferrari", "Rolls Royce"]
 CAR_UNLOCK_SCORES = [0, 500, 1500, 3000]
 
-# Player car settings
 CAR_WIDTH = 99
 CAR_START_X = 215
 
-# Enemy car settings
 ENEMY_CAR_WIDTH = 99
 ENEMY_CAR_HEIGHT = 100
 ENEMY_START_Y = -600
@@ -46,7 +43,7 @@ BASE_ENEMY_SPEED = 5
 BASE_BG_SPEED = 3
 
 # Speed limits per difficulty [Easy, Normal, Hard, Insane]
-MAX_ENEMY_SPEEDS = [10, 15, 18, None]  # None = unlimited
+MAX_ENEMY_SPEEDS = [10, 15, 18, None] 
 MAX_BG_SPEEDS = [7, 12, 15, None]
 
 # Animation
