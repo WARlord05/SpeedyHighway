@@ -11,14 +11,12 @@ import random
 import hashlib
 from datetime import datetime
 
-# Add parent directory to path for cross-package imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from game.config import DAILY_CHALLENGES
 
 
 class Achievement:
-    ## Represents achievement.
     def __init__(self, id, name, description, condition):
         self.id = id
         self.name = name

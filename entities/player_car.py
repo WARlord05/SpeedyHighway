@@ -2,7 +2,6 @@
 Player Car Entity
 SpeedyHighway v1.2.0
 
-Handles player car: loading, rendering, animation, and movement.
 """
 
 import os

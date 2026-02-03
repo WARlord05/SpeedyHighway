@@ -1,8 +1,6 @@
 """
 Enemy Car Entity
 SpeedyHighway v1.2.0
-
-Handles enemy car: loading, rendering, movement, and spawning.
 """
 
 import os
