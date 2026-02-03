@@ -20,7 +20,6 @@ from game.config import (
 
 
 class PlayerCar:
-    """Player car entity with animation support."""
     
     def __init__(self, car_index=0):
         self.car_index = car_index
@@ -39,7 +38,6 @@ class PlayerCar:
         self.load_car_image(car_index)
     
     def load_car_image(self, car_index):
-        """Load car image based on car index."""
         self.car_index = car_index
         car_filename = AVAILABLE_CARS[car_index]
         
@@ -49,7 +47,6 @@ class PlayerCar:
             self._load_standard_car(car_filename)
     
     def _load_special_car(self):
-        """Load animated special car frames."""
         try:
             self.spc_frames = []
             for i in range(SPECIAL_CAR_FRAMES):
@@ -66,14 +63,12 @@ class PlayerCar:
             self.spc_frames = []
     
     def _load_standard_car(self, filename):
-        """Load standard car image."""
         self.image = pygame.image.load(
             get_resource_path(os.path.join("assets", filename))
         )
         self.spc_frames = []
     
     def update_animation(self):
-        """Update special car animation frame."""
         if self.spc_frames:
             self.animation_timer += 1
             if self.animation_timer >= self.animation_speed:
@@ -82,22 +77,17 @@ class PlayerCar:
                 self.image = self.spc_frames[self.current_frame]
     
     def draw(self, surface):
-        """Draw the car on the given surface."""
         surface.blit(self.image, (self.x, self.y))
     
     def move_left(self, amount=80):
-        """Move car left by amount."""
         self.x -= amount
     
     def move_right(self, amount=80):
-        """Move car right by amount."""
         self.x += amount
     
     def set_position(self, x, y):
-        """Set car position."""
         self.x = x
         self.y = y
     
     def get_rect(self):
-        """Get car bounding rectangle."""
         return pygame.Rect(self.x, self.y, self.width, self.image.get_height())
