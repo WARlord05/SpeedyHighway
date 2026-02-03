@@ -60,3 +60,4 @@ Future plans(SpeedyH).txt
 
 # Release notes (not tracked in git)
 RELEASE_NOTES_*.md
+.venv/
