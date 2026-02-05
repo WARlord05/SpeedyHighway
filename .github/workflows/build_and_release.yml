@@ -1,0 +1,53 @@
+name: Build & Release Game
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install pyinstaller pygame
+
+      - name: Sanity import check
+        run: |
+          python -c "import car"
+
+      - name: Build game
+        run: |
+          cd project
+          pyinstaller SpeedyHighway.spec.backup
+          
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: project/dist/SpeedyHighway.spec/SpeedyHighway.spec.exe
+          tag_name: ${{ github.ref_name }}
+          name: Speedy Highway v*.*.*
+          body: |
+            ##  What's New
+
+            write the descriptions
+            
+            
+            **Note:** If you encounter any issues, you can also download the source code and run with Python.
