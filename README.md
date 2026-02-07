@@ -271,9 +271,12 @@ Add `SpeedyHighway.exe` to your antivirus whitelist/exclusions:
 
 ```text
 SpeedyHighway/
-├── car.py                     # Main source code (v1.2.0)
+├── main.py                    # Game entry point (v1.2.0)
 ├── README.md                  # Project documentation
+├── requirements.txt           # Python dependencies
 ├── .gitignore                 # Git ignore configuration
+├── analytics/                 # Data schema, validation, summary stats
+├── scripts/                   # Analysis script (analyze_game_data.py)
 ├── assets/                    # Game assets (images, sounds, icons)
 │   ├── back.jpg              # Background image
 │   ├── car.png               # Default car sprite
@@ -334,6 +337,7 @@ The game includes comprehensive data persistence that automatically handles:
 - **Release Notes**: `RELEASE_NOTES_v1.1.0.md` (NEW)
 - **Technical Details**: `project/PROJECT_STRUCTURE.txt`
 - **Comprehensive Guide**: `docs/PROJECT_DOCUMENTATION.md`
+- **Data & analytics**: `docs/DATA_ANALYSIS.md` – game data schema, validation, and analysis script (`scripts/analyze_game_data.py`)
 
 ## 🎉 Enjoy the Game
 
