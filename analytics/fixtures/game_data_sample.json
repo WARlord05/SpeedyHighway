@@ -1,0 +1,33 @@
+{
+  "high_scores": [
+    {"score": 4200, "difficulty": "Hard", "survival_time": 3, "date": "2025-02-01 14:22"},
+    {"score": 3100, "difficulty": "Normal", "survival_time": 2, "date": "2025-02-02 10:15"},
+    {"score": 1800, "difficulty": "Normal", "survival_time": 1, "date": "2025-02-03 09:00"},
+    {"score": 850, "difficulty": "Easy", "survival_time": 1, "date": "2025-02-04 16:45"}
+  ],
+  "difficulty": 2,
+  "selected_car": 2,
+  "unlocked_cars": [0, 1, 2],
+  "achievements": {
+    "first_game": true,
+    "score_1000": true,
+    "near_miss_10": false,
+    "lane_master": false,
+    "survivor": false,
+    "speed_demon": false,
+    "speed_god": false,
+    "perfect_game": false
+  },
+  "games_played": 47,
+  "total_playtime": 12400,
+  "best_streak": 5,
+  "last_daily_challenge": "2025-02-07",
+  "daily_challenge": {
+    "type": "score",
+    "target": 2000,
+    "description": "Score 2000 points",
+    "completed": false
+  },
+  "highest_difficulty_reached": 2,
+  "best_scores_per_difficulty": [1200, 3100, 4200, 0]
+}
