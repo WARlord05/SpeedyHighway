@@ -5,6 +5,8 @@ Defines the expected structure of game_data.json and validates loaded data.
 
 from typing import Any
 
+# Difficulty names as stored in high_scores entries (string) or by index (0-3)
+DIFFICULTY_NAMES = ("Easy", "Normal", "Hard", "Insane")
 
 # Expected top-level keys and their value types
 GAME_DATA_SCHEMA = {
@@ -24,6 +26,15 @@ GAME_DATA_SCHEMA = {
 
 # High score entry schema (each item in high_scores)
 HIGH_SCORE_ENTRY_KEYS = {"score", "difficulty", "survival_time", "date"}
+
+
+def _is_valid_difficulty(value: Any) -> bool:
+    """Return True if value is a valid difficulty (int 0-3 or str in DIFFICULTY_NAMES)."""
+    if isinstance(value, int) and 0 <= value <= 3:
+        return True
+    if isinstance(value, str) and value in DIFFICULTY_NAMES:
+        return True
+    return False
 
 
 def _check_type(value: Any, expected: type | tuple) -> bool:
@@ -66,6 +77,16 @@ def get_schema_errors(data: dict) -> list[str]:
                 )
             if "score" in entry and not isinstance(entry["score"], (int, float)):
                 errors.append(f"high_scores[{i}].score must be numeric")
+            if "difficulty" in entry and not _is_valid_difficulty(entry["difficulty"]):
+                errors.append(
+                    f"high_scores[{i}].difficulty must be 0-3 or one of {DIFFICULTY_NAMES}"
+                )
+            if "survival_time" in entry and not isinstance(
+                entry["survival_time"], (int, float)
+            ):
+                errors.append(f"high_scores[{i}].survival_time must be numeric")
+            if "date" in entry and not isinstance(entry["date"], str):
+                errors.append(f"high_scores[{i}].date must be a string")
 
     # Validate list lengths where fixed
     best_scores = data.get("best_scores_per_difficulty", [])

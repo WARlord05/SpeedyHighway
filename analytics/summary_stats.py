@@ -2,6 +2,7 @@
 Summary statistics and metrics from SpeedyHighway game data.
 """
 
+import statistics
 from typing import Any
 
 
@@ -24,6 +25,11 @@ def compute_summary_stats(data: dict) -> dict[str, Any]:
         d = e["difficulty"]
         by_difficulty[d] = by_difficulty.get(d, []) + [e.get("score", 0)]
 
+    # Descriptive stats for stored high scores (median, std, min)
+    score_median = round(statistics.median(scores), 1) if len(scores) >= 1 else 0
+    score_std = round(statistics.stdev(scores), 1) if len(scores) >= 2 else 0.0
+    score_min = min(scores) if scores else 0
+
     return {
         "games_played": data.get("games_played", 0),
         "total_playtime_frames": data.get("total_playtime", 0),
@@ -37,6 +43,9 @@ def compute_summary_stats(data: dict) -> dict[str, Any]:
         "high_scores_count": len(scores),
         "top_score": max(scores) if scores else 0,
         "score_mean": round(sum(scores) / len(scores), 1) if scores else 0,
+        "score_median": score_median,
+        "score_std": score_std,
+        "score_min": score_min,
         "scores_by_difficulty": {k: (len(v), max(v) if v else 0) for k, v in by_difficulty.items()},
         "best_scores_per_difficulty": {
             difficulty_names[i]: best_per_diff[i]

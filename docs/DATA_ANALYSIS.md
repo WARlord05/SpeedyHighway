@@ -37,13 +37,21 @@ Each element in `high_scores`:
 
 Location: `analytics/`
 
-- **schema.py**: Validates `game_data` structure and types.
-- **summary_stats.py**: Computes summary statistics (games played, playtime, achievements, score stats, best per difficulty).
+- **schema.py**: Validates `game_data` structure and types (including high_scores entry fields: difficulty, survival_time, date). Exports `DIFFICULTY_NAMES`.
+- **summary_stats.py**: Computes summary statistics (games played, playtime, achievements, score stats including mean, median, std, min, best per difficulty).
+- **exploratory.py**: CSV export and optional plotting: `export_high_scores_csv`, `export_summary_csv`, `run_validation`, `try_plot_score_distribution` (requires matplotlib).
 
 ### Usage in code
 
 ```python
-from analytics import validate_game_data, get_schema_errors, compute_summary_stats
+from analytics import (
+    validate_game_data,
+    get_schema_errors,
+    compute_summary_stats,
+    export_high_scores_csv,
+    export_summary_csv,
+    try_plot_score_distribution,
+)
 
 data = {...}  # loaded from game_data.json
 
@@ -52,7 +60,11 @@ if not validate_game_data(data):
         print(err)
 
 stats = compute_summary_stats(data)
-# stats["games_played"], stats["top_score"], stats["achievement_completion_pct"], etc.
+# stats["games_played"], stats["top_score"], stats["score_median"], stats["score_std"], etc.
+
+export_high_scores_csv(data, "high_scores.csv")
+export_summary_csv(stats, "summary_stats.csv")
+try_plot_score_distribution(data, "score_distribution.png")  # if matplotlib installed
 ```
 
 ## Analysis script
@@ -61,7 +73,8 @@ stats = compute_summary_stats(data)
 
 - Loads `data/game_data.json` if present, otherwise the sample fixture.
 - Validates schema and prints any errors.
-- Prints summary statistics (games played, playtime, achievements, high scores, best per difficulty).
+- Prints summary statistics (games played, playtime, achievements, high scores, mean/median/std/min, best per difficulty).
+- Supports CSV export and JSON output for pipelines.
 
 ### Run
 
@@ -73,23 +86,38 @@ python scripts/analyze_game_data.py
 
 # Use a specific file
 python scripts/analyze_game_data.py path/to/game_data.json
+
+# Export high_scores to CSV
+python scripts/analyze_game_data.py --export csv --output high_scores.csv
+
+# Export summary metrics to CSV
+python scripts/analyze_game_data.py --export summary_csv -o summary_stats.csv
+
+# Output stats as JSON (for scripting)
+python scripts/analyze_game_data.py --format json
+
+# Save score distribution plot (requires matplotlib)
+python scripts/analyze_game_data.py --plot score_distribution.png
+
+# Quiet mode: only export or JSON
+python scripts/analyze_game_data.py --export csv -o out.csv --quiet
 ```
 
-No extra dependencies beyond the project’s `requirements.txt` (pygame is not required for this script; only the `analytics` package and standard library are used).
+No extra dependencies for basic use (schema, summary stats, CSV export). For `--plot`, install matplotlib.
 
 ## Example metrics
 
 - **Engagement**: `games_played`, `total_playtime`, `best_streak`
 - **Skill / progression**: `top_score`, `best_scores_per_difficulty`, `highest_difficulty_reached`
 - **Completion**: `achievements_unlocked` / 9, `unlocked_cars` count
-- **Score distribution**: From `high_scores` you can compute mean, median, and breakdown by difficulty
+- **Score distribution**: `score_mean`, `score_median`, `score_std`, `score_min` from stored high_scores; breakdown by difficulty via `scores_by_difficulty`
 
 ## Optional: deeper analysis
 
-For histograms, time series, or exports (e.g. CSV), you can:
+For custom histograms, time series, or notebooks:
 
 1. Load `game_data.json` (or the sample) with Python.
-2. Use `analytics.summary_stats.compute_summary_stats(data)` for standard metrics.
-3. Optionally use **pandas** and **matplotlib** (add to `requirements.txt` and install) to plot score distributions, playtime over time, or achievement unlock order.
+2. Use `compute_summary_stats(data)` for standard metrics and `export_high_scores_csv` / `export_summary_csv` for CSV (stdlib only).
+3. Use `try_plot_score_distribution(data, path)` or **pandas** and **matplotlib** for score distributions, playtime over time, or achievement unlock order.
 
 The schema and summary stats are designed so that any script or notebook can reuse the same definitions and stay consistent with the game’s data format.
