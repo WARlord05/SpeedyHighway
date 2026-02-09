@@ -15,9 +15,22 @@ def load_game_data():
     try:
         data_path = get_resource_path(os.path.join("data", "game_data.json"))
         with open(data_path, "r") as f:
-            return json.load(f)
+            data = json.load(f)
+        _validate_and_warn(data)
+        return data
     except (FileNotFoundError, json.JSONDecodeError):
         return create_default_game_data()
+
+
+def _validate_and_warn(game_data):
+    """Optional schema validation; logs warnings only, does not alter data."""
+    try:
+        from analytics.schema import get_schema_errors
+        errors = get_schema_errors(game_data)
+        if errors:
+            print("Game data schema warnings:", "; ".join(errors[:3]))
+    except Exception:
+        pass
 
 
 def create_default_game_data():
