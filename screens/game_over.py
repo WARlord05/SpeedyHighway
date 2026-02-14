@@ -19,16 +19,33 @@ from game.config import (
 
 def display_game_over_screen(surface, game_state):
     surface.fill(BLACK)
-    
-    # Fonts
-    font_title = pygame.font.SysFont("comicsansms", 72, True)
-    font_text = pygame.font.SysFont("lucidaconsole", 20)
-    font_small = pygame.font.SysFont("lucidaconsole", 16)
-    
+
+    screen_w = surface.get_width()
+    center_x = screen_w // 2
+
+    # Fonts (gamified but safe)
+    font_title = pygame.font.SysFont("impact", 80)
+    font_text = pygame.font.SysFont("consolas", 32, True)
+    font_small = pygame.font.SysFont("consolas", 24)
+
     # Title
-    title = font_title.render("GAME OVER", True, RED)
-    surface.blit(title, (400 - title.get_width() // 2, 100))
-    
+        # Title
+    title = font_title.render("G  A  M  E  O  V  E  R", True, RED)
+    title_y = 100
+    surface.blit(title, (center_x - title.get_width() // 2, title_y))
+
+    # Divider line (place BELOW title, not through it)
+    line_y = title_y + title.get_height() + 10
+    line_width = title.get_width() + 40
+    pygame.draw.line(
+        surface,
+        WHITE,
+        (center_x - line_width // 2, line_y),
+        (center_x + line_width // 2, line_y),
+        2
+    )
+
+
     # Stats
     stats = [
         f"Final Score: {game_state.total_score}",
@@ -39,11 +56,12 @@ def display_game_over_screen(surface, game_state):
         f"Survival Time: {game_state.survival_time // 60}s",
         f"Difficulty: {DIFFICULTY_MODES[game_state.current_difficulty]}"
     ]
-    
+
+    start_y = 220
     for i, stat in enumerate(stats):
         text = font_text.render(stat, True, WHITE)
-        surface.blit(text, (400 - text.get_width() // 2, 200 + i * 30))
-    
+        surface.blit(text, (center_x - text.get_width() // 2, start_y + i * 36))
+
     # Instruction
     instruction = font_small.render("Press SPACE to return to menu", True, YELLOW)
-    surface.blit(instruction, (400 - instruction.get_width() // 2, 500))
+    surface.blit(instruction, (center_x - instruction.get_width() // 2, 520))

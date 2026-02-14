@@ -36,9 +36,9 @@ def display_achievements(surface, game_state):
         surface.blit(game_state.menu_bg_icon_faded, (x, y))
     
     # Fonts
-    font_title = pygame.font.SysFont("comicsansms", 48, True)
-    font_text = pygame.font.SysFont("lucidaconsole", 16)
-    font_small = pygame.font.SysFont("lucidaconsole", 14)
+    font_title = pygame.font.SysFont("arial bold",54, True)
+    font_text = pygame.font.SysFont("consolas", 18)
+    font_small = pygame.font.SysFont("consolas", 15)
     
     if game_state.reset_confirmation_active:
         _display_reset_confirmation(surface, font_title, font_text, font_small)
@@ -90,7 +90,7 @@ def _display_achievements_list(surface, game_state, font_title, font_text, font_
     draw_panel(surface, panel_width, panel_height, panel_x, panel_y)
     
     # Title
-    title = font_title.render("ACHIEVEMENTS", True, GREEN)
+    title = font_title.render("A C H I E V E M E N T S", True,(0,255,200))
     surface.blit(title, (400 - title.get_width() // 2, panel_y + 30))
     
     # Achievements list
