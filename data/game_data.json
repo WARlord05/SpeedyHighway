@@ -1,0 +1,91 @@
+{
+  "high_scores": [
+    {
+      "score": 1435,
+      "difficulty": "Normal",
+      "survival_time": 18,
+      "date": "2026-02-11 15:31"
+    },
+    {
+      "score": 1262,
+      "difficulty": "Normal",
+      "survival_time": 15,
+      "date": "2026-02-11 15:09"
+    },
+    {
+      "score": 1172,
+      "difficulty": "Normal",
+      "survival_time": 15,
+      "date": "2026-02-11 15:08"
+    },
+    {
+      "score": 1083,
+      "difficulty": "Normal",
+      "survival_time": 13,
+      "date": "2026-02-11 15:08"
+    },
+    {
+      "score": 934,
+      "difficulty": "Normal",
+      "survival_time": 12,
+      "date": "2026-02-11 15:07"
+    },
+    {
+      "score": 781,
+      "difficulty": "Hard",
+      "survival_time": 8,
+      "date": "2026-02-11 15:32"
+    },
+    {
+      "score": 596,
+      "difficulty": "Normal",
+      "survival_time": 7,
+      "date": "2026-02-11 15:07"
+    },
+    {
+      "score": 447,
+      "difficulty": "Normal",
+      "survival_time": 5,
+      "date": "2026-02-11 15:06"
+    },
+    {
+      "score": 442,
+      "difficulty": "Insane",
+      "survival_time": 3,
+      "date": "2026-02-11 15:32"
+    },
+    {
+      "score": 402,
+      "difficulty": "Normal",
+      "survival_time": 5,
+      "date": "2026-02-11 15:07"
+    }
+  ],
+  "difficulty": 2,
+  "selected_car": 0,
+  "unlocked_cars": [
+    0,
+    1
+  ],
+  "achievements": {
+    "first_game": true,
+    "score_1000": true
+  },
+  "games_played": 19,
+  "total_playtime": 7898,
+  "best_streak": 0,
+  "last_daily_challenge": "2026-02-11",
+  "daily_challenge": {
+    "type": "near_miss",
+    "target": 15,
+    "description": "Get 15 near misses",
+    "completed": false
+  },
+  "highest_difficulty_reached": 0,
+  "best_scores_per_difficulty": [
+    0,
+    0,
+    0,
+    0
+  ]
+}

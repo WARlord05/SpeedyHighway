@@ -35,13 +35,30 @@ A thrilling 2D highway racing game built with Python and Pygame featuring enhanc
 
 ### Step-by-Step Installation
 
+> **Recommended:** Use **Python lower than 3.14** for best compatibility.
+
 1. **Clone the repository**
    ```bash
    git clone https://github.com/WARlord05/SpeedyHighway.git
    cd SpeedyHighway
    ```
 
-2. **Install dependencies**
+2. **Create and activate a virtual environment**
+
+   **Windows**
+   ```bash
+   python -m venv myenv
+   myvenv\Scripts\activate
+   ```
+
+   **macOS / Linux**
+   ```bash
+   python3 -m venv myvenv
+   source myvenv/bin/activate
+   ```
+
+
+3. **Install dependencies**
    ```bash
    pip install pygame
    ```
@@ -51,7 +68,7 @@ A thrilling 2D highway racing game built with Python and Pygame featuring enhanc
    pip install -r requirements.txt
    ```
 
-3. **Run the game**
+4. **Run the game**
    ```bash
    python main.py
    ```
@@ -256,7 +273,7 @@ Add `SpeedyHighway.exe` to your antivirus whitelist/exclusions:
 - **Version**: 1.1.0 Enhanced Safety Edition
 - **Author**: Tanay Vidhate (WARlord05)
 - **Release Date**: September 2025
-- **Engine**: Python 3.13+ with Pygame 2.6.1+
+- **Engine**: Python < 3.14 with Pygame 2.6.1+
 - **Platform**: Windows 64-bit
 
 ### For Developers
