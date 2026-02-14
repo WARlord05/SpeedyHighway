@@ -1,7 +1,6 @@
 """
 Menu Screen
 SpeedyHighway v1.2.0
-
 """
 
 import os
@@ -18,7 +17,7 @@ from game.config import (
 )
 
 
-def draw_panel(surface, width, height, x, y, alpha=160, border_color=(64, 64, 64)):
+def draw_panel(surface, width, height, x, y, alpha=160, border_color=(120, 120, 120)):
     panel = pygame.Surface((width, height))
     panel.set_alpha(alpha)
     panel.fill(BLACK)
@@ -27,6 +26,8 @@ def draw_panel(surface, width, height, x, y, alpha=160, border_color=(64, 64, 64
 
 
 def display_main_menu(surface, game_state):
+    center_x = DISPLAY_WIDTH // 2
+
     # Background
     if hasattr(game_state, 'menu_bg_icon_faded') and game_state.menu_bg_icon_faded:
         icon_rect = game_state.menu_bg_icon_faded.get_rect()
@@ -41,17 +42,17 @@ def display_main_menu(surface, game_state):
     draw_panel(surface, panel_width, panel_height, panel_x, panel_y)
     
     # Title
-    font_title = pygame.font.SysFont("comicsansms", 48, True)
+    font_title = pygame.font.SysFont("impact", 60)
     title = font_title.render("SPEEDY HIGHWAY", True, WHITE)
-    surface.blit(title, (400 - title.get_width() // 2, 80))
+    surface.blit(title, (center_x - title.get_width() // 2, 80))
     
     # Version
-    font_version = pygame.font.SysFont("lucidaconsole", 16)
+    font_version = pygame.font.SysFont("bahnschrift", 18, True)
     version_text = font_version.render(f"v{__version__} - Enhanced Edition", True, YELLOW)
-    surface.blit(version_text, (400 - version_text.get_width() // 2, 145))
+    surface.blit(version_text, (center_x - version_text.get_width() // 2, 145))
     
     # Menu options
-    font_menu = pygame.font.SysFont("lucidaconsole", 24)
+    font_menu = pygame.font.SysFont("bahnschrift", 28, True)
     fullscreen_status = "ON" if game_state.fullscreen_mode else "OFF"
     options = [
         "SPACE - Start Game",
@@ -64,25 +65,32 @@ def display_main_menu(surface, game_state):
     ]
     
     for i, option in enumerate(options):
-        text = font_menu.render(option, True, WHITE)
-        surface.blit(text, (400 - text.get_width() // 2, 200 + i * 35))
+        if "Start Game" in option:
+            color = GREEN
+        elif "Quit" in option:
+            color = RED
+        else:
+            color = WHITE
+
+        text = font_menu.render(option, True, color)
+        surface.blit(text, (center_x - text.get_width() // 2, 200 + i * 35))
     
     # Volume info
-    font_small = pygame.font.SysFont("lucidaconsole", 16)
+    font_small = pygame.font.SysFont("bahnschrift", 18)
     volume_percent = int(game_state.sound_manager.master_volume * 100)
     volume_text = f"Sound Volume: {volume_percent}% (+/- to adjust, M to mute)"
     volume_render = font_small.render(volume_text, True, YELLOW)
-    surface.blit(volume_render, (400 - volume_render.get_width() // 2, 435))
+    surface.blit(volume_render, (center_x - volume_render.get_width() // 2, 435))
     
     music_volume_percent = int(game_state.sound_manager.music_volume * 100)
     music_text = f"Music Volume: {music_volume_percent}% ([/] to adjust, N to mute)"
     music_render = font_small.render(music_text, True, YELLOW)
-    surface.blit(music_render, (400 - music_render.get_width() // 2, 455))
+    surface.blit(music_render, (center_x - music_render.get_width() // 2, 455))
     
     fullscreen_text = "ALT+ENTER - Toggle fullscreen anytime"
     fullscreen_render = font_small.render(fullscreen_text, True, GREEN)
-    surface.blit(fullscreen_render, (400 - fullscreen_render.get_width() // 2, 475))
-    
+    surface.blit(fullscreen_render, (center_x - fullscreen_render.get_width() // 2, 475))
+
     # Seed info
     seed_text = f"Entropy Seed: {game_state._entropy_seed} (S to set custom seed)"
     seed_render = font_small.render(seed_text, True, BLUE)
@@ -106,6 +114,8 @@ def display_main_menu(surface, game_state):
 
 
 def display_seed_input(surface, game_state):
+    center_x = DISPLAY_WIDTH // 2
+
     # Background
     if hasattr(game_state, 'menu_bg_icon_faded') and game_state.menu_bg_icon_faded:
         icon_rect = game_state.menu_bg_icon_faded.get_rect()
@@ -119,18 +129,18 @@ def display_seed_input(surface, game_state):
     panel_y = (DISPLAY_HEIGHT - panel_height) // 2
     draw_panel(surface, panel_width, panel_height, panel_x, panel_y, alpha=180)
     
-    # Fonts
-    font_title = pygame.font.SysFont("comicsansms", 48, True)
-    font_text = pygame.font.SysFont("lucidaconsole", 24)
-    font_small = pygame.font.SysFont("lucidaconsole", 16)
+    # Fonts (consistent typography)
+    font_title = pygame.font.SysFont("impact", 48)
+    font_text = pygame.font.SysFont("bahnschrift", 24, True)
+    font_small = pygame.font.SysFont("bahnschrift", 18)
     
     # Title
     title = font_title.render("CUSTOM ENTROPY SEED", True, YELLOW)
-    surface.blit(title, (400 - title.get_width() // 2, 150))
+    surface.blit(title, (center_x - title.get_width() // 2, 150))
     
     # Instruction
     instruction = font_text.render("Enter a custom seed (integer):", True, WHITE)
-    surface.blit(instruction, (400 - instruction.get_width() // 2, 250))
+    surface.blit(instruction, (center_x - instruction.get_width() // 2, 250))
     
     # Input box
     input_box_rect = pygame.Rect(300, 300, 200, 40)
@@ -159,12 +169,13 @@ def display_seed_input(surface, game_state):
     
     for i, instr in enumerate(instructions):
         if instr:
-            color = YELLOW
-            text = font_small.render(instr, True, color)
-            surface.blit(text, (400 - text.get_width() // 2, 400 + i * 25))
+            text = font_small.render(instr, True, YELLOW)
+            surface.blit(text, (center_x - text.get_width() // 2, 400 + i * 25))
 
 
 def display_quit_confirmation(surface, game_state):
+    center_x = DISPLAY_WIDTH // 2
+
     # Background
     if hasattr(game_state, 'menu_bg_icon_faded') and game_state.menu_bg_icon_faded:
         icon_rect = game_state.menu_bg_icon_faded.get_rect()
@@ -180,20 +191,20 @@ def display_quit_confirmation(surface, game_state):
                alpha=200, border_color=(128, 128, 128))
     
     # Fonts
-    font_title = pygame.font.SysFont("comicsansms", 48, True)
-    font_text = pygame.font.SysFont("lucidaconsole", 24)
-    font_small = pygame.font.SysFont("lucidaconsole", 18)
+    font_title = pygame.font.SysFont("impact", 48)
+    font_text = pygame.font.SysFont("bahnschrift", 24, True)
+    font_small = pygame.font.SysFont("bahnschrift", 18)
     
     # Title
     title = font_title.render("QUIT GAME?", True, RED)
-    surface.blit(title, (400 - title.get_width() // 2, 200))
+    surface.blit(title, (center_x - title.get_width() // 2, 200))
     
     # Message
     message = font_text.render("Are you sure you want to quit?", True, WHITE)
-    surface.blit(message, (400 - message.get_width() // 2, 280))
+    surface.blit(message, (center_x - message.get_width() // 2, 280))
     
     warning = font_small.render("Any unsaved progress will be lost.", True, YELLOW)
-    surface.blit(warning, (400 - warning.get_width() // 2, 320))
+    surface.blit(warning, (center_x - warning.get_width() // 2, 320))
     
     # Options
     instructions = [
@@ -205,4 +216,4 @@ def display_quit_confirmation(surface, game_state):
     for i, instruction in enumerate(instructions):
         color = GREEN if instruction.startswith("N") else YELLOW
         text = font_small.render(instruction, True, color)
-        surface.blit(text, (400 - text.get_width() // 2, 350 + i * 25))
+        surface.blit(text, (center_x - text.get_width() // 2, 350 + i * 25))
