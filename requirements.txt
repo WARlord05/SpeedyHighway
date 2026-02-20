@@ -1,0 +1,7 @@
+# SpeedyHighway - Core
+pygame>=2.6.0
+
+# Optional: for analytics and data analysis scripts
+# Uncomment to run scripts/analyze_game_data.py with plots/reports
+# pandas>=2.0.0
+# matplotlib>=3.7.0
