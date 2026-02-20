@@ -19,8 +19,8 @@ from game.config import (
 
 
 def display_enhanced_hud(surface, game_state):
-    font = pygame.font.SysFont("lucidaconsole", 20)
-    font_small = pygame.font.SysFont("lucidaconsole", 14)
+    font = pygame.font.SysFont("consolas", 24)
+    font_small = pygame.font.SysFont("consolas", 18)
     
     # Score
     score_text = font.render(f"Score: {game_state.total_score}", True, WHITE)
@@ -65,12 +65,12 @@ def display_pause_menu(surface):
     surface.blit(overlay, (0, 0))
     
     # Pause text
-    font = pygame.font.SysFont("comicsansms", 72, True)
+    font = pygame.font.SysFont("impact", 72, True)
     pause_text = font.render("PAUSED", True, WHITE)
     surface.blit(pause_text, (400 - pause_text.get_width() // 2, 200 - pause_text.get_height() // 2))
     
     # Instructions
-    font_small = pygame.font.SysFont("lucidaconsole", 20)
+    font_small = pygame.font.SysFont("consolas", 20)
     instruction1 = font_small.render("Press ESC to Resume", True, WHITE)
     instruction2 = font_small.render("Click on window to resume", True, WHITE)
     surface.blit(instruction1, (400 - instruction1.get_width() // 2, 280))
@@ -87,12 +87,12 @@ def display_countdown_timer(surface, unpause_timer):
     surface.blit(overlay, (0, 0))
     
     # Countdown number
-    font = pygame.font.SysFont("comicsansms", 120, True)
+    font = pygame.font.SysFont("impact", 120, True)
     countdown_text = font.render(str(countdown_number), True, WHITE)
     surface.blit(countdown_text, (400 - countdown_text.get_width() // 2, 300 - countdown_text.get_height() // 2))
     
     # Ready text
-    font_small = pygame.font.SysFont("comicsansms", 36, True)
+    font_small = pygame.font.SysFont("consolas", 36, True)
     ready_text = font_small.render("Get Ready!", True, WHITE)
     surface.blit(ready_text, (400 - ready_text.get_width() // 2, 200 - ready_text.get_height() // 2))
 
@@ -100,7 +100,7 @@ def display_countdown_timer(surface, unpause_timer):
 def display_credit(surface):
     from game.config import __version__
     
-    font = pygame.font.SysFont("lucidaconsole", 14)
+    font = pygame.font.SysFont("consolas", 14)
     text = font.render(f"SpeedyHighway v{__version__}", True, WHITE)
     surface.blit(text, (600, 500))
     text = font.render("Thanks & Regards,", True, WHITE)

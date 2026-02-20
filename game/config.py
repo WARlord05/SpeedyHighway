@@ -11,12 +11,14 @@ __description__ = "Speedy Highway Racing Game - Enhanced Edition"
 DISPLAY_WIDTH = 800
 DISPLAY_HEIGHT = 600
 
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
-YELLOW = (255, 255, 0)
+BLACK = (15, 15, 25)          # deep night background
+WHITE = (230, 230, 250)       # soft lavender white
+GREEN = (0, 255, 180)         # neon teal (unlocked)
+RED = (255, 100, 140)          # softer neon red (locked)
+BLUE = (100, 160, 255)        # neon sky blue
+YELLOW = (255, 220, 100)
+       
+
 
 # Difficulty settings
 DIFFICULTY_MODES = ["Easy", "Normal", "Hard", "Insane"]
