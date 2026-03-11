@@ -335,6 +335,14 @@ The game includes comprehensive data persistence that automatically handles:
 - **Technical Details**: `project/PROJECT_STRUCTURE.txt`
 - **Comprehensive Guide**: `docs/PROJECT_DOCUMENTATION.md`
 
+## 👥 Contributors
+
+- [**WARlord05**](https://github.com/WARlord05) – Original author & maintainer
+- [**Vicky-codes17**](https://github.com/Vicky-codes17)
+- [**madhav2348**](https://github.com/madhav2348)
+- [**mbulandiqbal522**](https://github.com/mbulandiqbal522)
+- [**RonitARK**](https://github.com/RonitARK)
+
 ## 🎉 Enjoy the Game
 
 Thank you for playing **Speedy Highway v1.1.0 Enhanced Safety Edition**!
